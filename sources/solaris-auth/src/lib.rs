@@ -41,6 +41,8 @@ struct Auth {
     reads: BTreeMap<String, u64>,
     saves: BTreeMap<String, Save>,
     sequence: u64,
+    cooldowns: BTreeMap<String, u64>,
+    tick: u64,
 }
 
 impl Auth {
@@ -71,6 +73,8 @@ impl Auth {
         let state = self.sessions.get_mut(&session).expect("live session");
         state.failures += 1;
         if state.failures >= 5 {
+            self.cooldowns
+                .insert(state.key.clone(), self.tick.saturating_add(TIMEOUT_TICKS));
             state.authenticated = false;
             state.busy = true;
             vec![disconnect_player(
@@ -124,6 +128,17 @@ impl Auth {
             return vec![disconnect_player(
                 session,
                 "Несовпадение сессии / Session mismatch",
+            )];
+        }
+        if invoked.name == "login"
+            && self
+                .cooldowns
+                .get(&state.key)
+                .is_some_and(|until| self.tick < *until)
+        {
+            return vec![message_session(
+                session,
+                "Подождите 60 секунд / Login cooldown: wait 60 seconds",
             )];
         }
         if !state.loaded || state.busy {
@@ -191,10 +206,12 @@ impl Plugin for Auth {
 
     fn on_events(
         &mut self,
-        _context: &EventContext,
+        context: &EventContext,
         events: &[Event],
     ) -> Result<Vec<Command>, Failure> {
         let mut commands = Vec::new();
+        self.tick = context.tick;
+        self.cooldowns.retain(|_, until| self.tick < *until);
         for event in events {
             match event {
                 Event::PlayerJoined(joined) => {
@@ -330,3 +347,56 @@ impl Plugin for Auth {
 }
 
 export_plugin!(Auth);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn session() -> Session {
+        Session {
+            player: "player".into(),
+            key: "account:alice".into(),
+            loaded: true,
+            account: Some(Account {
+                hash: "hash".into(),
+                version: 1,
+            }),
+            ..Session::default()
+        }
+    }
+
+    #[test]
+    fn login_cooldown_survives_reconnection() {
+        let mut auth = Auth::default();
+        auth.sessions.insert(1, session());
+        let invoked = |session| CommandInvoked {
+            player: "player".into(),
+            session,
+            username: "Alice".into(),
+            operator: false,
+            position: solaris_plugin_sdk::types::Position {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
+            dimension: "minecraft:overworld".into(),
+            name: "login".into(),
+            arguments: vec!["x".repeat(129)],
+            raw_arguments: String::new(),
+        };
+        for _ in 0..5 {
+            auth.command(&invoked(1));
+        }
+        auth.sessions.remove(&1);
+        auth.sessions.insert(2, session());
+        let result = auth.command(&invoked(2));
+        assert!(
+            matches!(&result[..], [Command::SendMessage(message)] if message.text.contains("60"))
+        );
+        auth.tick = TIMEOUT_TICKS;
+        let result = auth.command(&invoked(2));
+        assert!(
+            matches!(&result[..], [Command::SendMessage(message)] if message.text.contains("Wrong password"))
+        );
+    }
+}

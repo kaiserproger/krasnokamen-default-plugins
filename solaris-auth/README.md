@@ -32,7 +32,9 @@ quarantine (only the declared authentication commands may pass while locked).
   without whitespace.
 - Join prompts are Russian + English. An unauthenticated connection is kicked
   after 1,200 native simulation ticks (60 seconds at 20 TPS); five wrong password
-  verifications also kick. Logout discards authentication and pending requests.
+  verifications also kick and block `/login` for the same case-insensitive name
+  for 1,200 ticks, including after reconnect. The cooldown is held in the plugin
+  instance and resets on restart. Logout discards authentication and pending requests.
 - Before authentication, the native gate holds the session locked: only the
   declared authentication commands may pass, and no other input (including
   block placement and breaking) reaches the world. Any other command (for
