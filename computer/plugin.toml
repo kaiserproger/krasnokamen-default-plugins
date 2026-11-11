@@ -16,4 +16,4 @@ size_bytes = 2441
 loaders = ["fabric", "neoforge", "forge"]
 content = ["blocks", "items", "assets"]
 permissions = ["register_blocks", "register_items", "load_assets"]
-required = true
+required = false
