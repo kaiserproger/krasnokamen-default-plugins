@@ -86,7 +86,7 @@ binary ABI compatibility:
 python3 tools/build_standard_pack.py --core-root /path/to/krasnokamen --write
 ```
 
-The guest `Cargo.lock` files pin `krasnokamen-plugin-sdk` at `0.8.0`, matching
+The guest `Cargo.lock` files pin `krasnokamen-plugin-sdk` at `0.9.0`, matching
 the selected core SDK. Update that pin with an SDK version migration: the
 builder uses `--locked` and refuses stale locks before compiling a component.
 
