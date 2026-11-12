@@ -44,7 +44,9 @@ def build_options(parser: argparse.ArgumentParser) -> None:
                         default=os.environ.get("KRASNOKAMEN_BUILD_PROFILE", "release"))
     parser.add_argument("--jobs", type=positive,
                         default=positive(os.environ.get("KRASNOKAMEN_BUILD_JOBS", "4")))
-    parser.add_argument("--loader-root", type=Path, default=TOOLS.parents[1] / "solaris-loader")
+    parser.add_argument("--loader-root", type=Path,
+                        default=Path(os.environ.get("KRASNOKAMEN_LOADER_ROOT")
+                                     or TOOLS.parents[1] / "solaris-loader"))
 
 
 def profile_flags(profile: str) -> list[str]:

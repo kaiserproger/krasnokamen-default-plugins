@@ -10,8 +10,13 @@ from __future__ import annotations
 import tempfile
 import subprocess
 import sys
+import argparse
+import os
 from pathlib import Path
+from unittest import mock
 import unittest
+
+import content_pipeline
 
 from content_pipeline import read_json, publish
 import build_standard_pack
@@ -45,6 +50,18 @@ class AuthoringContractRefusals(unittest.TestCase):
                       (package.package_id for package in build_standard_pack.PACKAGES))
         self.assertNotIn("chisel",
                          (package.package_id for package in build_standard_pack.STANDARD_PACKAGES))
+
+    def test_loader_root_follows_the_harness_environment(self):
+        # A worktree candidate has no sibling `solaris-loader`; the harness names its Loader checkout.
+        for variable, expected in ((None, content_pipeline.TOOLS.parents[1] / "solaris-loader"),
+                                   ("/somewhere/loader", Path("/somewhere/loader"))):
+            with mock.patch.dict(os.environ):
+                os.environ.pop("KRASNOKAMEN_LOADER_ROOT", None)
+                if variable is not None:
+                    os.environ["KRASNOKAMEN_LOADER_ROOT"] = variable
+                parser = argparse.ArgumentParser()
+                content_pipeline.build_options(parser)
+                self.assertEqual(parser.parse_args([]).loader_root, expected)
 
     def test_retired_settlement_profile_is_refused_before_launch(self):
         result = subprocess.run(
