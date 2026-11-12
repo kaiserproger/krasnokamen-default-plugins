@@ -1,10 +1,28 @@
-# Solaris Default Plugins
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kaiserproger/krasnokamen/main/docs/brand/krasnokamen-logo-on-dark.svg">
+    <img src="https://raw.githubusercontent.com/kaiserproger/krasnokamen/main/docs/brand/krasnokamen-logo-on-light.svg" alt="Krasnokamen" width="420">
+  </picture>
+</p>
 
-First-party plugin source for the Solaris server (`../solaris` core repo).
-The standard pack ships five API 0.8 WebAssembly component packages: each
+<h1 align="center">Krasnokamen Default Plugins</h1>
+
+<p align="center">
+  <b>An engine for large Minecraft-compatible simulations.</b><br>
+  First-party WebAssembly plugins for the Krasnokamen server
+</p>
+
+<p align="center">
+  <sub><b>Krasnokamen 1.0.0-rc.5 «Pauline»</b> · formerly Solaris (<a href="https://github.com/kaiserproger/krasnokamen/blob/main/docs/brand/README.md#formerly-solaris">why the name changed</a>)</sub>
+</p>
+
+First-party plugin source for the [Krasnokamen](https://github.com/kaiserproger/krasnokamen)
+server (`../solaris` core repo). The standard pack ships five API 0.8 WebAssembly component packages: each
 deployed directory has `plugin.toml` + `plugin.wasm`, with an optional
 `config.toml`. Settlement gameplay is owned natively by the core server in
 `../solaris`; this repository ships no settlement component.
+
+> **Names.** The code still uses the Solaris names until the rename lands in the source tree: the package ids (`solaris-*`), `solaris:plugin@0.8.0`, the `solaris-v2` binary, `SOLARIS_*` variables and repository paths below are the current ones.
 
 ## Packages
 
@@ -94,15 +112,15 @@ On Linux, clone this repository and run its installer (Bash 4+, GNU coreutils).
 No compilation or network access is needed after cloning:
 
 ```sh
-git clone https://github.com/kaiserproger/solaris-default-plugins.git
-bash solaris-default-plugins/install.sh --directory /path/to/server/plugins
+git clone https://github.com/kaiserproger/krasnokamen-default-plugins.git
+bash krasnokamen-default-plugins/install.sh --directory /path/to/server/plugins
 ```
 
 With no package names, the installer selects the five standard packages.
 To install only selected packages:
 
 ```sh
-bash solaris-default-plugins/install.sh --directory /path/to/server/plugins \
+bash krasnokamen-default-plugins/install.sh --directory /path/to/server/plugins \
   solaris-essentials solaris-audit
 ```
 
@@ -159,7 +177,7 @@ Servers must use the core's `computer:monitor` identity, not the former private
 | Java with NeoForge Loader | Targeted by the same optional bundle |
 | Java with Forge Loader | Targeted by the same optional bundle |
 | Native `solaris-client` | Joins without the bundle (its Loader rejects block content/indexes) and sees the carrier block |
-| Vanilla Java without Solaris Loader | Joins without the bundle and sees the carrier `minecraft:gray_glazed_terracotta` block and item |
+| Vanilla Java without Krasnokamen Loader | Joins without the bundle and sees the carrier `minecraft:gray_glazed_terracotta` block and item |
 
 The real component and archive have passed simultaneous monitor/Ruby/Sapphire
 grant, placement, rendering, break and custom-item pickup cycles on all three
@@ -228,7 +246,7 @@ carriers; this package reserves only gray glazed terracotta.
 ## Layout
 
 ```text
-solaris-default-plugins/
+krasnokamen-default-plugins/
   <package>/  plugin.toml, plugin.wasm, [config.toml,] README.md
   sources/    Rust component source workspaces
   standard-pack/  pack README (no code; lists the five pack members)
@@ -236,4 +254,4 @@ solaris-default-plugins/
 
 ## License
 
-Same as Solaris core: MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`).
+Same as Krasnokamen core: MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`).
