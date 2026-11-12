@@ -153,8 +153,14 @@ def main() -> int:
             token = f'path = "{dependency}"'
             if source.count(token) != 1:
                 raise ValueError("expected exactly one canonical SDK path dependency")
-            source = source.replace(token, f'path = "{sdk.as_posix()}"')
-            manifest.write_text(source + "\n[workspace]\n")
+            # The SDK joins the throwaway workspace (core's relative layout, WIT included). A path dependency
+            # outside the workspace root puts the absolute core path into Cargo's crate metadata hash, which
+            # reaches the wasm symbol names, so a component would reproduce in one checkout location only.
+            core_copy = guest / "_core"
+            shutil.copytree(core_root / "sdk" / "rust", core_copy / "sdk" / "rust", ignore=shutil.ignore_patterns("target"))
+            shutil.copytree(core_root / "crates" / "mc-script" / "wit", core_copy / "crates" / "mc-script" / "wit")
+            source = source.replace(token, 'path = "_core/sdk/rust/krasnokamen-plugin-sdk"')
+            manifest.write_text(source + '\n[workspace]\nexclude = ["_core"]\n')
             # Only throwaway manifests change SDK paths. Remap all authoring/staging paths
             # so clean builds do not embed checkout names or random temporary directories.
             remaps = [(stage, "/krasnokamen-authoring"), (root, "/krasnokamen-plugins"),
