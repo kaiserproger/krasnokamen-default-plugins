@@ -580,6 +580,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "krasnokamen-plugin-integration-tests"
+version = "0.1.0"
+dependencies = [
+ "mc-plugin-host",
+ "mc-script",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "leb128fmt"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -638,7 +648,7 @@ dependencies = [
 
 [[package]]
 name = "mc-data"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.5"
 dependencies = [
  "mc-domain",
  "mc-nbt",
@@ -652,11 +662,11 @@ dependencies = [
 
 [[package]]
 name = "mc-domain"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.5"
 
 [[package]]
 name = "mc-nbt"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.5"
 dependencies = [
  "bytemuck",
  "bytes",
@@ -665,7 +675,7 @@ dependencies = [
 
 [[package]]
 name = "mc-plugin-host"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.5"
 dependencies = [
  "argon2",
  "mc-data",
@@ -684,7 +694,7 @@ dependencies = [
 
 [[package]]
 name = "mc-script"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.5"
 dependencies = [
  "arc-swap",
  "serde",
@@ -1090,16 +1100,6 @@ checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
 dependencies = [
  "libc",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "krasnokamen-plugin-integration-tests"
-version = "0.1.0"
-dependencies = [
- "mc-plugin-host",
- "mc-script",
- "tempfile",
- "tokio",
 ]
 
 [[package]]
