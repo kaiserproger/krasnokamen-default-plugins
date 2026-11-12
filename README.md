@@ -1,26 +1,43 @@
-# Solaris Default Plugins
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kaiserproger/krasnokamen/main/docs/brand/krasnokamen-logo-on-dark.svg">
+    <img src="https://raw.githubusercontent.com/kaiserproger/krasnokamen/main/docs/brand/krasnokamen-logo-on-light.svg" alt="Krasnokamen" width="420">
+  </picture>
+</p>
 
-First-party plugin source for the Solaris server (`../solaris` core repo).
-The standard pack ships five API 0.8 WebAssembly component packages: each
-deployed directory has `plugin.toml` + `plugin.wasm`, with an optional
-`config.toml`. Settlement gameplay is owned natively by the core server in
-`../solaris`; this repository ships no settlement component.
+<h1 align="center">Krasnokamen Default Plugins</h1>
+
+<p align="center">
+  <b>An engine for large Minecraft-compatible simulations.</b><br>
+  First-party WebAssembly plugins for the Krasnokamen server
+</p>
+
+<p align="center">
+  <sub><b>Krasnokamen 1.0.0-rc.5 «Pauline»</b> · formerly Solaris (<a href="https://github.com/kaiserproger/krasnokamen/blob/main/docs/brand/README.md#formerly-solaris">why the name changed</a>)</sub>
+</p>
+
+First-party plugin source for the [Krasnokamen](https://github.com/kaiserproger/krasnokamen)
+server (`../solaris` core repo). The standard pack ships five API 0.9
+WebAssembly component packages: each deployed directory has `plugin.toml` +
+`plugin.wasm`, with an optional `config.toml`. Settlement gameplay is owned
+natively by the core server in `../solaris`; this repository ships no
+settlement component.
 
 ## Packages
 
 Standard pack (recommended startup order: permissions, essentials, economy,
 towns, audit) — see `standard-pack/README.md` for scope and omissions:
 
-- `solaris-permissions`, `solaris-essentials`, `solaris-economy`,
-  `solaris-towns`, `solaris-audit`
+- `krasnokamen-permissions`, `krasnokamen-essentials`, `krasnokamen-economy`,
+  `krasnokamen-towns`, `krasnokamen-audit`
 
 Optional components:
 
 - `basic-economy` — inventory-backed shop, separate from the standard pack's
   virtual currency. Install it by explicitly selecting its package name.
-- [`solaris-auth`](solaris-auth/README.md) — offline-mode `/register`, `/login`
+- [`krasnokamen-auth`](krasnokamen-auth/README.md) — offline-mode `/register`, `/login`
   and `/changepassword`, durable salted hashes, session timeout and build denial.
-  Build explicitly with `--package solaris-auth`; it is not enabled by the
+  Build explicitly with `--package krasnokamen-auth`; it is not enabled by the
   default pack. See its README for damage/other-command limitations.
 - [`chisel`](chisel/README.md) — datapack-style chisel addon (slab/stair
   conversion, Loader item bundle). Build explicitly with `--package chisel`;
@@ -42,7 +59,7 @@ Legacy source/reference examples (not deployable components):
 
 ## Repository layout
 
-- `<package>/` — an API 0.8 deployable component package (a standard-pack member).
+- `<package>/` — an API 0.9 deployable component package (a standard-pack member).
 - `sources/` — Rust source workspaces for component packages; source never
   enters a deployed package directory.
 - `standard-pack/` — docs only; the deployed behaviour lives in the five member
@@ -54,7 +71,7 @@ Legacy source/reference examples (not deployable components):
 
 Integration gates (`tools/run_integration.py`): the `standard-pack` profile
 byte-verifies all seven shipped components against the selected core SDK/WIT,
-runs `plugin_standard_pack`, and starts the real `solaris-v2` server with the
+runs `plugin_standard_pack`, and starts the real `krasnokamen` server with the
 five standard packages, then with all seven shipped components together.
 Settlement domain acceptance tests were v1-runtime-bound and deleted 2026-10-15;
 settlement behavior now lives natively in the core server (`../solaris`).
@@ -62,14 +79,14 @@ Archive:
 `/home/kaiserroman/solaris/.analysis/archive/sibling-v1-integration-tests/integration-tests-pre-phase5-20261015.tgz`.
 
 Rebuild all shipped components whenever the core SDK/WIT changes, even if the
-manifest API version remains `0.8.0`; that version alone does not establish
+manifest API version remains `0.9.0`; that version alone does not establish
 binary ABI compatibility:
 
 ```sh
-python3 tools/build_standard_pack.py --core-root /path/to/solaris --write
+python3 tools/build_standard_pack.py --core-root /path/to/krasnokamen --write
 ```
 
-The guest `Cargo.lock` files pin `solaris-plugin-sdk` at `0.8.0`, matching
+The guest `Cargo.lock` files pin `krasnokamen-plugin-sdk` at `0.8.0`, matching
 the selected core SDK. Update that pin with an SDK version migration: the
 builder uses `--locked` and refuses stale locks before compiling a component.
 
@@ -78,9 +95,9 @@ Use `--check` instead of `--write` for deterministic source/artifact verificatio
 From the core checkout, run the sibling-owned gates with:
 
 ```sh
-SOLARIS_DEFAULT_PLUGINS_ROOT=/path/to/solaris-default-plugins \
+KRASNOKAMEN_DEFAULT_PLUGINS_ROOT=/path/to/krasnokamen-default-plugins \
   python3 -m tools.harness run standard-pack
-SOLARIS_DEFAULT_PLUGINS_ROOT=/path/to/solaris-default-plugins \
+KRASNOKAMEN_DEFAULT_PLUGINS_ROOT=/path/to/krasnokamen-default-plugins \
   python3 -m tools.harness run standard-pack --real-client
 ```
 
@@ -94,16 +111,16 @@ On Linux, clone this repository and run its installer (Bash 4+, GNU coreutils).
 No compilation or network access is needed after cloning:
 
 ```sh
-git clone https://github.com/kaiserproger/solaris-default-plugins.git
-bash solaris-default-plugins/install.sh --directory /path/to/server/plugins
+git clone https://github.com/kaiserproger/krasnokamen-default-plugins.git
+bash krasnokamen-default-plugins/install.sh --directory /path/to/server/plugins
 ```
 
 With no package names, the installer selects the five standard packages.
 To install only selected packages:
 
 ```sh
-bash solaris-default-plugins/install.sh --directory /path/to/server/plugins \
-  solaris-essentials solaris-audit
+bash krasnokamen-default-plugins/install.sh --directory /path/to/server/plugins \
+  krasnokamen-essentials krasnokamen-audit
 ```
 
 Stop the server first. The installer refuses existing package paths, including
@@ -123,12 +140,12 @@ set `plugins.strict = true` and list every deployed plugin id under
 directory = "/path/to/server/plugins"
 strict = true
 expected = [
-  "solaris-permissions", "solaris-essentials", "solaris-economy",
-  "solaris-towns", "solaris-audit",
+  "krasnokamen-permissions", "krasnokamen-essentials", "krasnokamen-economy",
+  "krasnokamen-towns", "krasnokamen-audit",
 ]
 ```
 
-Then run `solaris --check --config server.toml` before starting the server.
+Then run `krasnokamen --check --config server.toml` before starting the server.
 Package API/configuration validation belongs to the server, not the copy
 script. The core binary loads deployed directories only; it never compiles
 these sources in. Manual copying remains valid on other platforms.
@@ -145,11 +162,11 @@ parent is referenced by id.
 
 This package is declarative content only. It does not spawn processes,
 implement a relay, add commands, or register crafting recipes. Computer
-sessions and `solaris:screen` / `solaris:computer` remain edge/client-owned
+sessions and `krasnokamen:screen` / `krasnokamen:computer` remain edge/client-owned
 features with their existing opt-in and consent requirements. Installing the
 content does not enable those features or grant desktop capture/input access.
-Servers must use the core's `computer:monitor` identity, not the former private
-`solaris:monitor` id; there is no alias.
+Servers must use the core's `computer:monitor` identity; the former private
+monitor id has no alias.
 
 ### Client support
 
@@ -158,8 +175,8 @@ Servers must use the core's `computer:monitor` identity, not the former private
 | Java with Fabric Loader | Targeted by the optional block/item/asset bundle |
 | Java with NeoForge Loader | Targeted by the same optional bundle |
 | Java with Forge Loader | Targeted by the same optional bundle |
-| Native `solaris-client` | Joins without the bundle (its Loader rejects block content/indexes) and sees the carrier block |
-| Vanilla Java without Solaris Loader | Joins without the bundle and sees the carrier `minecraft:gray_glazed_terracotta` block and item |
+| Native `krasnokamen-client` | Joins without the bundle (its Loader rejects block content/indexes) and sees the carrier block |
+| Vanilla Java without Krasnokamen Loader | Joins without the bundle and sees the carrier `minecraft:gray_glazed_terracotta` block and item |
 
 The real component and archive have passed simultaneous monitor/Ruby/Sapphire
 grant, placement, rendering, break and custom-item pickup cycles on all three
@@ -179,7 +196,7 @@ revision as the server:
 ```sh
 python3 sources/computer/build_bundle.py
 python3 tools/build_standard_pack.py \
-  --core-root /path/to/solaris --loader-root /path/to/solaris-loader \
+  --core-root /path/to/krasnokamen --loader-root /path/to/krasnokamen-loader \
   --package computer --build-root /path/to/build-output/computer --write
 bash install.sh --directory /path/to/server/plugins computer
 ```
@@ -188,7 +205,7 @@ The first command follows the chisel authoring convention: hashes every
 authored asset into the schema-2 index, writes a deterministic archive (index
 first, sorted assets, fixed timestamps), and refreshes the actual archive hash
 and size in `computer/plugin.toml`. Run it after asset changes. The second
-builds the API 0.8.0 component and runs the existing native/Java authoring
+builds the API 0.9.0 component and runs the existing native/Java authoring
 validators before publishing `computer/plugin.wasm`. Neither command is run
 by the installer. For an isolated immutable deployment, use
 `--output-dir /path/to/new-candidate` instead of `--write`; the package is then
@@ -215,7 +232,7 @@ carriers; this package reserves only gray glazed terracotta.
 
 ## Component API contract
 
-- API 0.8 applies to the five standard packages and optional `basic-economy`, `solaris-auth`, `chisel`, `graves` and `computer`;
+- API 0.9 applies to the five standard packages and optional `basic-economy`, `krasnokamen-auth`, `chisel`, `graves` and `computer`;
   legacy reference examples above retain historical manifests and are not
   installation targets.
 - Server-only unless the manifest says otherwise; commands work with a vanilla
@@ -228,7 +245,7 @@ carriers; this package reserves only gray glazed terracotta.
 ## Layout
 
 ```text
-solaris-default-plugins/
+krasnokamen-default-plugins/
   <package>/  plugin.toml, plugin.wasm, [config.toml,] README.md
   sources/    Rust component source workspaces
   standard-pack/  pack README (no code; lists the five pack members)
@@ -236,4 +253,4 @@ solaris-default-plugins/
 
 ## License
 
-Same as Solaris core: MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`).
+Same as Krasnokamen core: MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`).
