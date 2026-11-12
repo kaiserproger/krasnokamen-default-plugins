@@ -51,7 +51,7 @@ def archive_bytes() -> bytes:
                     "sha256": digest(data), "size_bytes": len(data)}
                    for asset_id, path, data in assets],
     }
-    entries = [("solaris-client.json", (json.dumps(index, separators=(",", ":")) + "\n").encode())]
+    entries = [("krasnokamen-client.json", (json.dumps(index, separators=(",", ":")) + "\n").encode())]
     entries.extend((path, data) for _, path, data in sorted(assets, key=lambda asset: asset[1]))
     output = io.BytesIO()
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:

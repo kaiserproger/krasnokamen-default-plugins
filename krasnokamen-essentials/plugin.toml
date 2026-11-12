@@ -1,0 +1,10 @@
+id = "krasnokamen-essentials"
+name = "Krasnokamen Essentials"
+version = "0.1.0"
+api = "0.9.0"
+entry = "plugin.wasm"
+events = ["player.left", "player.died"]
+capabilities = ["storage", "player_teleport", "player_queries"]
+player_commands = ["sethome", "home", "delhome", "setspawn", "spawn", "setwarp", "warp", "delwarp", "back", "tpa", "tpaccept", "msg", "reply"]
+# Command admission checks this node against the deployed permission provider.
+command_permissions = { home = "krasnokamen.essentials.use", sethome = "krasnokamen.essentials.use", setwarp = "krasnokamen.essentials.manage", delwarp = "krasnokamen.essentials.manage" }

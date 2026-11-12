@@ -24,28 +24,28 @@ class Package:
 
 
 PACKAGES = (
-    Package("solaris-permissions", "solaris_permissions_plugin.wasm"),
-    Package("solaris-essentials", "solaris_essentials_plugin.wasm"),
-    Package("solaris-economy", "solaris_economy_plugin.wasm"),
-    Package("solaris-towns", "solaris_towns_plugin.wasm"),
-    Package("solaris-audit", "solaris_audit_plugin.wasm"),
+    Package("krasnokamen-permissions", "krasnokamen_permissions_plugin.wasm"),
+    Package("krasnokamen-essentials", "krasnokamen_essentials_plugin.wasm"),
+    Package("krasnokamen-economy", "krasnokamen_economy_plugin.wasm"),
+    Package("krasnokamen-towns", "krasnokamen_towns_plugin.wasm"),
+    Package("krasnokamen-audit", "krasnokamen_audit_plugin.wasm"),
     Package("basic-economy", "basic_economy_plugin.wasm"),
-    Package("solaris-auth", "solaris_auth_plugin.wasm"),
+    Package("krasnokamen-auth", "krasnokamen_auth_plugin.wasm"),
     Package("chisel", "chisel_plugin.wasm"),
-    Package("graves", "solaris_graves_plugin.wasm"),
+    Package("graves", "krasnokamen_graves_plugin.wasm"),
     Package("computer", "computer_plugin.wasm"),
 )
 # Rebuild every shipped component on SDK changes; installation remains opt-in.
 # Optional addons stay out of the default selection; build them with --package.
 # test_content_pipeline.py pins the default selection.
 STANDARD_PACKAGES = (
-    Package("solaris-permissions", "solaris_permissions_plugin.wasm"),
-    Package("solaris-essentials", "solaris_essentials_plugin.wasm"),
-    Package("solaris-economy", "solaris_economy_plugin.wasm"),
-    Package("solaris-towns", "solaris_towns_plugin.wasm"),
-    Package("solaris-audit", "solaris_audit_plugin.wasm"),
+    Package("krasnokamen-permissions", "krasnokamen_permissions_plugin.wasm"),
+    Package("krasnokamen-essentials", "krasnokamen_essentials_plugin.wasm"),
+    Package("krasnokamen-economy", "krasnokamen_economy_plugin.wasm"),
+    Package("krasnokamen-towns", "krasnokamen_towns_plugin.wasm"),
+    Package("krasnokamen-audit", "krasnokamen_audit_plugin.wasm"),
     Package("basic-economy", "basic_economy_plugin.wasm"),
-    Package("solaris-auth", "solaris_auth_plugin.wasm"),
+    Package("krasnokamen-auth", "krasnokamen_auth_plugin.wasm"),
 )
 TARGET = "wasm32-unknown-unknown"
 
@@ -96,8 +96,8 @@ def stage_package(source: Path, target: Path) -> None:
     # Copy authored/native package files only. Authoring source is not a deployed package resource.
     shutil.copytree(source, target, ignore=shutil.ignore_patterns("plugin.wasm", "client-src", "content-src", "README.md"))
     manifest = tomllib.loads((source / "plugin.toml").read_text())
-    if manifest["id"] != source.name or manifest["api"] != "0.8.0" or manifest["entry"] != "plugin.wasm":
-        raise ValueError("package identity, API 0.8.0 and plugin.wasm entry must stay authored")
+    if manifest["id"] != source.name or manifest["api"] != "0.9.0" or manifest["entry"] != "plugin.wasm":
+        raise ValueError("package identity, API 0.9.0 and plugin.wasm entry must stay authored")
 
 
 def package_bindings(deployment: Path) -> list[dict]:
@@ -116,7 +116,7 @@ def main() -> int:
     root = args.source_root.resolve()
     core_root = args.core_root.resolve()
     encoder_manifest = core_root / "crates" / "mc-plugin-host" / "Cargo.toml"
-    sdk = core_root / "sdk" / "rust" / "solaris-plugin-sdk"
+    sdk = core_root / "sdk" / "rust" / "krasnokamen-plugin-sdk"
     if not encoder_manifest.is_file() or not (sdk / "Cargo.toml").is_file():
         raise SystemExit("selected --core-root must contain the native encoder and actual guest SDK")
     selected = tuple(package for package in PACKAGES if package.package_id == args.package) if args.package else STANDARD_PACKAGES
@@ -149,7 +149,7 @@ def main() -> int:
             shutil.copytree(source_dir, guest, ignore=shutil.ignore_patterns("target"))
             manifest = guest / "Cargo.toml"
             source = manifest.read_text()
-            dependency = tomllib.loads(source)["dependencies"]["solaris-plugin-sdk"]["path"]
+            dependency = tomllib.loads(source)["dependencies"]["krasnokamen-plugin-sdk"]["path"]
             token = f'path = "{dependency}"'
             if source.count(token) != 1:
                 raise ValueError("expected exactly one canonical SDK path dependency")
@@ -157,8 +157,8 @@ def main() -> int:
             manifest.write_text(source + "\n[workspace]\n")
             # Only throwaway manifests change SDK paths. Remap all authoring/staging paths
             # so clean builds do not embed checkout names or random temporary directories.
-            remaps = [(stage, "/solaris-authoring"), (root, "/solaris-plugins"),
-                      (core_root, "/solaris-core"), (build_root, "/solaris-build")]
+            remaps = [(stage, "/krasnokamen-authoring"), (root, "/krasnokamen-plugins"),
+                      (core_root, "/krasnokamen-core"), (build_root, "/krasnokamen-build")]
             flags = os.environ.get("RUSTFLAGS", "") + " " + " ".join(
                 f"--remap-path-prefix={source}={target}" for source, target in remaps)
             build_env = os.environ | {"CARGO_TARGET_DIR": str(target_dir), "RUSTFLAGS": flags.strip()}
@@ -207,7 +207,7 @@ def main() -> int:
                    "component_encoder_sha256": sha256(args.component_encoder.resolve()) if args.component_encoder else
                        sha256(core_root / "target" / args.profile / "examples" / "plugin_component"),
                    "native_validator_sha256": sha256(args.native_validator.resolve()) if args.native_validator else
-                       sha256(core_root / "target" / args.profile / "solaris-content-validator"),
+                       sha256(core_root / "target" / args.profile / "krasnokamen-content-validator"),
                    "activation": "not exercised; authoring-native validation only"}
         (candidate / "content-receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
         mismatches = []

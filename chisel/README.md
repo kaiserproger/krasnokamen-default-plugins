@@ -15,8 +15,8 @@ durability 250, 1 wear per use), crafted from an iron ingot over a stick
 `_stairs` variants (58 families, 232 native block-tool rules).
 
 This is a `server_and_client` package: it ships a Loader bundle (item
-definition, model and texture), so players need a Solaris client (native
-solaris-client, or the Fabric/NeoForge/Forge Loader). A vanilla client is
+definition, model and texture), so players need a Krasnokamen client (native
+krasnokamen-client, or the Fabric/NeoForge/Forge Loader). A vanilla client is
 refused during Configuration by the platform's Loader-required rule; there is
 no optional-bundle negotiation yet, so no vanilla fallback exists. Install the
 `chisel` package alongside the other packages in `[plugins].directory` — it is

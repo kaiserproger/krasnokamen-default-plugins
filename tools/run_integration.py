@@ -15,11 +15,11 @@ from pathlib import Path
 
 PLUGINS_ROOT = Path(__file__).resolve().parent.parent
 STANDARD_PACK = (
-    ("solaris-permissions", ("storage",)),
-    ("solaris-essentials", ("storage", "player_teleport", "player_queries")),
-    ("solaris-economy", ("storage", "storage_batches")),
-    ("solaris-towns", ("storage", "zones", "player_queries")),
-    ("solaris-audit", ("storage",)),
+    ("krasnokamen-permissions", ("storage",)),
+    ("krasnokamen-essentials", ("storage", "player_teleport", "player_queries")),
+    ("krasnokamen-economy", ("storage", "storage_batches")),
+    ("krasnokamen-towns", ("storage", "zones", "player_queries")),
+    ("krasnokamen-audit", ("storage",)),
 )
 TEST_MANIFEST = PLUGINS_ROOT / "sources" / "integration-tests" / "Cargo.toml"
 
@@ -43,10 +43,10 @@ def cargo_test(core_root: Path, target: str, *extra: str) -> None:
                 f'path = "{dependency["path"]}"', f'path = "{selected.as_posix()}"'
             )
     environment = os.environ.copy()
-    environment["SOLARIS_CORE_ROOT"] = str(core_root)
-    environment.setdefault("SOLARIS_DEFAULT_PLUGINS_ROOT", str(PLUGINS_ROOT))
+    environment["KRASNOKAMEN_CORE_ROOT"] = str(core_root)
+    environment.setdefault("KRASNOKAMEN_DEFAULT_PLUGINS_ROOT", str(PLUGINS_ROOT))
     environment.setdefault("CARGO_TARGET_DIR", str(core_root / "target"))
-    with tempfile.TemporaryDirectory(prefix="solaris-plugin-integration-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="krasnokamen-plugin-integration-") as temporary:
         fixture = Path(temporary)
         # Explicit targets retain the original files (and their relative module
         # paths), while the throwaway package has no implicit src/lib.rs target.
@@ -80,7 +80,7 @@ def standard_pack(core_root: Path, artifact_dir: Path, real_client: bool, timeou
                  PLUGINS_ROOT, tuple(package_id for package_id, _ in STANDARD_PACK),
                  timeout_seconds)
     start_server(core_root, artifact_dir, "all-shipped",
-                 PLUGINS_ROOT, tuple(package_id for package_id, _ in STANDARD_PACK) + ("basic-economy", "solaris-auth"),
+                 PLUGINS_ROOT, tuple(package_id for package_id, _ in STANDARD_PACK) + ("basic-economy", "krasnokamen-auth"),
                  timeout_seconds)
     if real_client:
         sys.path.insert(0, str(core_root))
@@ -113,7 +113,7 @@ def start_server(core_root: Path, artifact_dir: Path, gate: str, package_root: P
             "", "[plugins]", f'directory = "{deployment}"', "",
         ))
     )
-    run(["cargo", "build", "-p", "mc-edge", "--bin", "solaris-v2"], core_root)
+    run(["cargo", "build", "-p", "mc-edge", "--bin", "krasnokamen"], core_root)
     # v2 has no --check: exercise real startup, then request a clean save/stop.
     sys.path.insert(0, str(core_root))
     from tools.harness.runtime import stop_process, wait_port
@@ -121,7 +121,7 @@ def start_server(core_root: Path, artifact_dir: Path, gate: str, package_root: P
     log_path = artifact_dir / f"{gate}-server.log"
     with log_path.open("wb") as log:
         server = subprocess.Popen(
-            [str(core_root / "target" / "debug" / "solaris-v2"), "--config", str(config)],
+            [str(core_root / "target" / "debug" / "krasnokamen"), "--config", str(config)],
             cwd=core_root, stdin=subprocess.PIPE, stdout=log, stderr=subprocess.STDOUT,
             start_new_session=True,
         )

@@ -1,7 +1,7 @@
 id = "chisel"
 name = "Chisel"
 version = "0.1.0"
-api = "0.8.0"
+api = "0.9.0"
 entry = "plugin.wasm"
 
 [client]
@@ -11,8 +11,8 @@ schema = 2
 id = "chisel-content"
 version = "1"
 artifact = "client/chisel-content.zip"
-sha256 = "2ffc5c4c261befea0c94525c095801cfed4199dce5738f66de54b5e595dc3b87"
-size_bytes = 1176
+sha256 = "c22c2a8a688ea116a7c63bf334622e0b188d540db7d4ccb51578685e7697ca75"
+size_bytes = 1184
 loaders = ["fabric", "neoforge", "forge", "native"]
 content = ["items", "assets"]
 permissions = ["register_items", "load_assets"]

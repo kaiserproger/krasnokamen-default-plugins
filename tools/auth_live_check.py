@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Raw-protocol auth acceptance against a real solaris-v2 server (run-ready).
+"""Raw-protocol auth acceptance against a real krasnokamen server (run-ready).
 
 Real TCP only: handshake -> login -> configuration -> Play, then:
   1. decode the ACTUAL first SyncPlayerPosition; wait for the
@@ -38,9 +38,9 @@ by design (config optional, never asserted).
 
 Usage:
   python3 tools/auth_live_check.py \
-    --server-bin /path/to/solaris-v2 \
+    --server-bin /path/to/krasnokamen \
     --plugins-dir /path/to/candidate/plugins \
-    [--password AuthCheck9] [--output-dir .analysis/codex-logs/solaris-auth/run-X]
+    [--password AuthCheck9] [--output-dir .analysis/codex-logs/krasnokamen-auth/run-X]
 """
 from __future__ import annotations
 
@@ -62,8 +62,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 TOOLS_ROOT = Path(__file__).resolve().parents[1]
-CORE_ROOT = Path(os.environ.get("SOLARIS_CORE_ROOT", str(TOOLS_ROOT.parent / "solaris")))
-DEFAULT_OUT = TOOLS_ROOT / ".analysis" / "codex-logs" / "solaris-auth"
+CORE_ROOT = Path(os.environ.get("KRASNOKAMEN_CORE_ROOT", str(TOOLS_ROOT.parent / "solaris")))
+DEFAULT_OUT = TOOLS_ROOT / ".analysis" / "codex-logs" / "krasnokamen-auth"
 
 PROTOCOL_VERSION = 775
 PASSWORD_DEFAULT = "AuthCheck9"
@@ -101,7 +101,7 @@ def load_core_runtime():
     path = CORE_ROOT / "tools" / "harness" / "runtime.py"
     if not path.is_file():
         raise RuntimeError(f"missing core harness runtime: {path}")
-    spec = importlib.util.spec_from_file_location("solaris_core_harness_runtime", str(path))
+    spec = importlib.util.spec_from_file_location("krasnokamen_core_harness_runtime", str(path))
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
@@ -281,7 +281,7 @@ class RawClient:
 
 
 def check_package(plugins_dir: Path) -> dict[str, str]:
-    pkg = plugins_dir / "solaris-auth"
+    pkg = plugins_dir / "krasnokamen-auth"
     manifest_path = pkg / "plugin.toml"
     wasm_path = pkg / "plugin.wasm"
     if not manifest_path.is_file():
@@ -289,19 +289,19 @@ def check_package(plugins_dir: Path) -> dict[str, str]:
     if not wasm_path.is_file():
         raise RuntimeError(f"missing built package wasm: {wasm_path} (parent must provide built auth package)")
     manifest = tomllib.loads(manifest_path.read_text())
-    for key, want in (("id", "solaris-auth"), ("api", "0.8.0"), ("entry", "plugin.wasm")):
+    for key, want in (("id", "krasnokamen-auth"), ("api", "0.9.0"), ("entry", "plugin.wasm")):
         if manifest.get(key) != want:
-            raise RuntimeError(f"solaris-auth manifest {key}={manifest.get(key)!r}, want {want!r}")
+            raise RuntimeError(f"krasnokamen-auth manifest {key}={manifest.get(key)!r}, want {want!r}")
     for cmd in ("register", "login", "changepassword"):
         if cmd not in manifest.get("player_commands", []):
-            raise RuntimeError(f"solaris-auth manifest missing player command {cmd}")
+            raise RuntimeError(f"krasnokamen-auth manifest missing player command {cmd}")
     if "player.joined" not in manifest.get("events", []) or "player.left" not in manifest.get("events", []):
-        raise RuntimeError("solaris-auth manifest must declare player.joined/player.left")
+        raise RuntimeError("krasnokamen-auth manifest must declare player.joined/player.left")
     if "before-build" in manifest.get("hooks", []):
-        raise RuntimeError("solaris-auth must use the native login gate, not a before-build hook")
+        raise RuntimeError("krasnokamen-auth must use the native login gate, not a before-build hook")
     for capability in ("storage", "auth"):
         if capability not in manifest.get("capabilities", []):
-            raise RuntimeError(f"solaris-auth manifest must declare {capability} capability")
+            raise RuntimeError(f"krasnokamen-auth manifest must declare {capability} capability")
     # config.toml intentionally absent (native argon2id, no seed): optional, never asserted.
     return {"manifest": str(manifest_path), "wasm": str(wasm_path),
             "config_present": str((pkg / "config.toml").is_file())}
@@ -634,7 +634,7 @@ def main() -> int:
     world_dir.mkdir(exist_ok=True)
     config_path = out / "server.toml"
     config_path.write_text(
-        "[server]\nname = \"solaris-auth-live\"\n"
+        "[server]\nname = \"krasnokamen-auth-live\"\n"
         "motd = \"auth live gate\"\nview_distance = 4\nsimulation_distance = 4\n"
         f"[network]\nbind_address = \"127.0.0.1\"\nport = {port}\n"
         "[auth]\nonline_mode = false\nrequire_plugin_login = true\n"

@@ -1,12 +1,12 @@
 # Решения владельца: CP-058 / CP-059 / CP-068
 
-**BLOCKED-ON-OWNER-DECISION — все ответы pending.** Рекомендации — **NOT admitted defaults**, не shipped PvP policy и не acceptance. Источник: `SOLARIS_SETTLEMENTS_LONG_TERM_ADDITION_SPEC.md` §23 (новые решения явно маркировать, численные значения фиксировать до gates; не выдумывать ради заполнения) и §15 (logout не отменяет начатый законный бой); прямое решение Main оставляет admission владельцу. Cursor — [IMPLEMENTATION_SPEC §1.5](IMPLEMENTATION_SPEC.md#15-a0-единый-словарь-ownership-и-текущий-курсор).
+**BLOCKED-ON-OWNER-DECISION — все ответы pending.** Рекомендации — **NOT admitted defaults**, не shipped PvP policy и не acceptance. Источник: `KRASNOKAMEN_SETTLEMENTS_LONG_TERM_ADDITION_SPEC.md` §23 (новые решения явно маркировать, численные значения фиксировать до gates; не выдумывать ради заполнения) и §15 (logout не отменяет начатый законный бой); прямое решение Main оставляет admission владельцу. Cursor — [IMPLEMENTATION_SPEC §1.5](IMPLEMENTATION_SPEC.md#15-a0-единый-словарь-ownership-и-текущий-курсор).
 
 Формат ответа: для **каждого** вопроса «утвердить предложенное значение» либо точное другое значение; затем явное admission конкретного ruleset/revision. В матрице §1 каждая непустая ячейка — **отдельный** вопрос: «Утвердить `<definition>.<поле строки>` = `<ячейка>`?», не пакетное одобрение строки/предмета. `—` означает отсутствие вопроса. Источники чисел указаны у таблиц; units: HP, simulation ticks, blocks, условные mass units. Изменённые числа требуют новой proposal revision до gates.
 
 ## 1. RULESET-R2 — рекомендовать точные существующие proposal values
 
-Источник всех ячеек: **CONTENT_SPEC §18.2**, не §18.1 приблизительные диапазоны. Сокращения: A = `arming_sword`, L = `longsword`, S = `spear`, B = `war_bow`, M = `mail_hauberk`, P = `pavise`; namespace `solaris-settlements`.
+Источник всех ячеек: **CONTENT_SPEC §18.2**, не §18.1 приблизительные диапазоны. Сокращения: A = `arming_sword`, L = `longsword`, S = `spear`, B = `war_bow`, M = `mail_hauberk`, P = `pavise`; namespace `krasnokamen-settlements`.
 
 | Поле отдельного вопроса | A | L | S | B | M | P |
 |---|---|---|---|---|---|---|
@@ -70,7 +70,7 @@
 
 ## 2. RULESET-CP059-SUPPLY rev 1 — отдельные вопросы supply
 
-**Точный существующий proposal:** CONTENT_SPEC §18.3. Все ID recipes имеют prefix `solaris-settlements:`; значения ниже рекомендуются **только как pending proposal**, не mounted defaults. Каждая ячейка — отдельный вопрос «Утвердить `<recipe>.<поле столбца>` = `<ячейка>`?»; входы saddle разделены, чтобы каждое количество утверждалось отдельно.
+**Точный существующий proposal:** CONTENT_SPEC §18.3. Все ID recipes имеют prefix `krasnokamen-settlements:`; значения ниже рекомендуются **только как pending proposal**, не mounted defaults. Каждая ячейка — отдельный вопрос «Утвердить `<recipe>.<поле столбца>` = `<ячейка>`?»; входы saddle разделены, чтобы каждое количество утверждалось отдельно.
 
 | Recipe | Вход 1? | Вход 2? | Выход? | Station? | Simulation ticks? | Tool wear? |
 |---|---|---|---|---|---|---|

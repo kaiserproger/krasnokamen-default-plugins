@@ -49,7 +49,7 @@ def run_standard_pack_client(
     config.write_text(
         f"""[server]
 name = "standard-pack-client-gate"
-motd = "Solaris standard pack real-client gate"
+motd = "Krasnokamen standard pack real-client gate"
 view_distance = 4
 simulation_distance = 4
 [network]
@@ -64,7 +64,7 @@ world_dir = "{world_dir.as_posix()}"
 seed = 0
 """
     )
-    # solaris-v2 reads vanilla ops.json beside its config.
+    # krasnokamen reads vanilla ops.json beside its config.
     operator = "StandardPackGate"
     (run_dir / "ops.json").write_text(json.dumps([{
         "uuid": str(uuid.UUID(bytes=hashlib.md5(f"OfflinePlayer:{operator}".encode(),
@@ -79,7 +79,7 @@ seed = 0
     mcp = None
     try:
         server = subprocess.Popen(
-            [str(REPO_ROOT / "target" / "debug" / "solaris-v2"), "--config", str(config)],
+            [str(REPO_ROOT / "target" / "debug" / "krasnokamen"), "--config", str(config)],
             cwd=REPO_ROOT,
             stdout=server_log,
             stderr=subprocess.STDOUT,

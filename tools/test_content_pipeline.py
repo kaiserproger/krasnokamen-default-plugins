@@ -19,14 +19,14 @@ import build_standard_pack
 
 class AuthoringContractRefusals(unittest.TestCase):
     def test_duplicate_json_field_cannot_silently_replace_asset_digest(self):
-        with tempfile.TemporaryDirectory(prefix="solaris-duplicate-json-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="krasnokamen-duplicate-json-") as temporary:
             path = Path(temporary) / "asset.json"
             path.write_text('{"sha256":"reviewed","sha256":"replacement"}')
             with self.assertRaises(ValueError):
                 read_json(path)
 
     def test_immutable_publication_preserves_existing_artifacts(self):
-        with tempfile.TemporaryDirectory(prefix="solaris-immutable-publication-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="krasnokamen-immutable-publication-") as temporary:
             root = Path(temporary)
             candidate = root / "candidate"
             candidate.mkdir()

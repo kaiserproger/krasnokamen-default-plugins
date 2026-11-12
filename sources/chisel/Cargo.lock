@@ -184,12 +184,12 @@ dependencies = [
 name = "chisel-plugin"
 version = "0.1.0"
 dependencies = [
- "solaris-plugin-sdk",
+ "krasnokamen-plugin-sdk",
  "wit-bindgen",
 ]
 
 [[package]]
-name = "solaris-plugin-sdk"
+name = "krasnokamen-plugin-sdk"
 version = "0.8.0"
 dependencies = [
  "serde",

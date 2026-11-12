@@ -41,9 +41,9 @@ def positive(value: str) -> int:
 
 def build_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--profile", choices=("debug", "release"),
-                        default=os.environ.get("SOLARIS_BUILD_PROFILE", "release"))
+                        default=os.environ.get("KRASNOKAMEN_BUILD_PROFILE", "release"))
     parser.add_argument("--jobs", type=positive,
-                        default=positive(os.environ.get("SOLARIS_BUILD_JOBS", "4")))
+                        default=positive(os.environ.get("KRASNOKAMEN_BUILD_JOBS", "4")))
     parser.add_argument("--loader-root", type=Path, default=TOOLS.parents[1] / "solaris-loader")
 
 
@@ -100,7 +100,7 @@ def validate_loader(loader_root: Path, deployment: Path, manifest: dict, jobs: i
     loader_root = loader_root.resolve()
     if not (loader_root / "loader-core" / "build.gradle.kts").is_file():
         raise ValueError(f"missing Loader validator source: {loader_root}")
-    with tempfile.TemporaryDirectory(prefix="solaris-content-loader-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="krasnokamen-content-loader-") as temporary:
         stage = Path(temporary)
         request = stage / "manifest.json"
         request.write_text(json.dumps(manifest))
@@ -110,17 +110,17 @@ def validate_loader(loader_root: Path, deployment: Path, manifest: dict, jobs: i
             return json.dumps(str(path))
         init.write_text(f'''gradle.projectsEvaluated {{
     def p = gradle.rootProject.project(':loader-core')
-    def bridge = p.tasks.register('compileSolarisContentValidator', JavaCompile) {{
+    def bridge = p.tasks.register('compileKrasnokamenContentValidator', JavaCompile) {{
         dependsOn p.tasks.named('classes')
-        source = p.files({quoted(TOOLS / 'content-validator' / 'SolarisContentValidator.java')})
+        source = p.files({quoted(TOOLS / 'content-validator' / 'KrasnokamenContentValidator.java')})
         classpath = p.sourceSets.main.runtimeClasspath
         destinationDirectory.set(p.layout.dir(p.provider {{ new File({quoted(stage / 'classes')}) }}))
         javaCompiler.set(p.javaToolchains.compilerFor(p.java.toolchain))
     }}
-    p.tasks.register('validateSolarisContent', JavaExec) {{
+    p.tasks.register('validateKrasnokamenContent', JavaExec) {{
         dependsOn bridge
         classpath = p.files({quoted(stage / 'classes')}) + p.sourceSets.main.runtimeClasspath
-        mainClass.set('dev.solaris.loader.SolarisContentValidator')
+        mainClass.set('dev.krasnokamen.loader.KrasnokamenContentValidator')
         javaLauncher.set(p.javaToolchains.launcherFor(p.java.toolchain))
         args {quoted(request)}, {quoted(deployment.resolve())}, {quoted(stage / 'cache')}
     }}
@@ -128,13 +128,13 @@ def validate_loader(loader_root: Path, deployment: Path, manifest: dict, jobs: i
 ''')
         run(["nice", "-n", "19", str(loader_root / "gradlew"), "--no-daemon",
              f"--max-workers={jobs}", "--init-script", str(init),
-             ":loader-core:validateSolarisContent"], loader_root)
+             ":loader-core:validateKrasnokamenContent"], loader_root)
 
 
 def validate_native(core_root: Path, deployment: Path, profile: str, jobs: int,
                     target_dir: Path, validator: Path | None = None) -> dict:
     grants = deployment_grants(deployment)
-    with tempfile.TemporaryDirectory(prefix="solaris-content-native-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="krasnokamen-content-native-") as temporary:
         stage = Path(temporary)
         report = stage / "report.json"
         request = stage / "request.json"
@@ -157,8 +157,8 @@ def deployment_grants(deployment: Path) -> dict[str, list[str]]:
             raise ValueError(f"duplicate package identity: {identity}")
         if identity != package.name:
             raise ValueError(f"package directory differs from identity: {package.name}: {identity}")
-        if manifest["api"] != "0.8.0" or manifest["entry"] != "plugin.wasm":
-            raise ValueError(f"package must preserve API 0.8.0 and plugin.wasm entry: {identity}")
+        if manifest["api"] != "0.9.0" or manifest["entry"] != "plugin.wasm":
+            raise ValueError(f"package must preserve API 0.9.0 and plugin.wasm entry: {identity}")
         grants[identity] = manifest.get("capabilities", [])
     if not grants:
         raise ValueError("empty deployment")
@@ -174,7 +174,7 @@ def client_costs(deployment: Path, manifest: dict) -> dict:
     for bundle in manifest["bundles"]:
         data = (deployment / bundle["owner"] / bundle["artifact"]).read_bytes()
         with zipfile.ZipFile(io.BytesIO(data)) as archive:
-            index_data = archive.read("solaris-client.json")
+            index_data = archive.read("krasnokamen-client.json")
             index = json.loads(index_data, object_pairs_hook=unique_object)
             costs = {"archive_bytes": len(data),
                      "decoded_bytes": sum(entry.file_size for entry in archive.infolist()),
@@ -191,7 +191,7 @@ def client_costs(deployment: Path, manifest: dict) -> dict:
 
 def run_native_bridge(core_root: Path, profile: str, jobs: int, target_dir: Path,
                       arguments: list[str], validator: Path | None = None) -> None:
-    with tempfile.TemporaryDirectory(prefix="solaris-content-validator-source-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="krasnokamen-content-validator-source-") as temporary:
         stage = Path(temporary)
         if validator is None:
             dependencies = "\n".join(
@@ -199,12 +199,12 @@ def run_native_bridge(core_root: Path, profile: str, jobs: int, target_dir: Path
                 for name in ("mc-data", "mc-world", "mc-worldgen", "mc-loader", "mc-plugin-host"))
             manifest = stage / "Cargo.toml"
             manifest.write_text(f'''[package]
-name = "solaris-content-validator"
+name = "krasnokamen-content-validator"
 version = "0.1.0"
 edition = "2024"
 [workspace]
 [[bin]]
-name = "solaris-content-validator"
+name = "krasnokamen-content-validator"
 path = {json.dumps(str(TOOLS / 'content-validator' / 'native.rs'))}
 [dependencies]
 {dependencies}
@@ -217,16 +217,16 @@ serde_json = "1"
             run(["nice", "-n", "19", "cargo", "build", "--manifest-path", str(manifest),
                  "-j", str(jobs), *profile_flags(profile)], core_root,
                 os.environ | {"CARGO_TARGET_DIR": str(target_dir.resolve())})
-            validator = target_dir / profile / "solaris-content-validator"
+            validator = target_dir / profile / "krasnokamen-content-validator"
         run(["nice", "-n", "19", str(validator.resolve()), *arguments], core_root)
 
 
 def validate_blueprint(core_root: Path, blueprint: Path, profile: str, jobs: int,
                        validator: Path | None = None) -> dict:
-    with tempfile.TemporaryDirectory(prefix="solaris-blueprint-report-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="krasnokamen-blueprint-report-") as temporary:
         report = Path(temporary) / "blueprint.json"
         run_native_bridge(core_root, profile, jobs, core_root / "target",
-                          ["blueprint", str(blueprint.resolve()), str(report), "solaris"], validator)
+                          ["blueprint", str(blueprint.resolve()), str(report), "krasnokamen"], validator)
         return read_json(report)
 
 

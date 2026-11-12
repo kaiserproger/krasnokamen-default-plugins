@@ -1,0 +1,14 @@
+default_group = "player"
+maximum_assignments = 64
+
+[[groups]]
+name = "player"
+nodes = ["krasnokamen.essentials.use", "krasnokamen.economy.use", "krasnokamen.towns.use"]
+
+[[groups]]
+name = "moderator"
+nodes = ["krasnokamen.essentials.use", "krasnokamen.economy.use", "krasnokamen.towns.use", "krasnokamen.audit.lookup"]
+
+[[groups]]
+name = "admin"
+nodes = ["*"]

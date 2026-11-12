@@ -1,6 +1,6 @@
 //! Optional monitor content. The verified Loader archive owns the matching
 //! carrier block declaration; the edge owns computer/screen behavior.
-use solaris_plugin_sdk::{export_plugin, lifecycle, Config, Failure, Plugin, StartupContribution};
+use krasnokamen_plugin_sdk::{export_plugin, lifecycle, Config, Failure, Plugin, StartupContribution};
 
 #[derive(Default)]
 struct Computer;

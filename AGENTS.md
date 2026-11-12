@@ -1,4 +1,4 @@
-# AGENTS — solaris-default-plugins
+# AGENTS — krasnokamen-default-plugins
 
 Independent sibling of `../solaris` (core). Owns production WebAssembly
 component plugin packages only. Core loads these from a deployed
@@ -7,9 +7,9 @@ component plugin packages only. Core loads these from a deployed
 ## Rules
 
 - One directory per package: `plugin.toml` + `plugin.wasm`, optional
-  `config.toml` + `README.md`. Keep `api = "0.8.0"` and explicitly set
+  `config.toml` + `README.md`. Keep `api = "0.9.0"` and explicitly set
   `entry = "plugin.wasm"`.
-- No cross-plugin service contracts exist in API 0.8: no manifest-level
+- No cross-plugin service contracts exist in API 0.9: no manifest-level
   dependencies, no calls into another package.
 - Strict-safe: every event/capability/command the component uses must be
   declared; no stray files in package dirs.

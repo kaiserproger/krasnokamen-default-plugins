@@ -1,7 +1,7 @@
 id = "computer"
 name = "Computer"
 version = "0.1.0"
-api = "0.8.0"
+api = "0.9.0"
 entry = "plugin.wasm"
 
 [client]
@@ -11,8 +11,8 @@ schema = 2
 id = "computer-content"
 version = "1"
 artifact = "client/computer-content.zip"
-sha256 = "39fd4eb94d0be4879d78d4257680a4a918698a9c26f934d77a4617c051d08705"
-size_bytes = 2441
+sha256 = "aa8f205325fe31197727d22244e40231066687740c7e173ca4be91e85fd08767"
+size_bytes = 2449
 loaders = ["fabric", "neoforge", "forge"]
 content = ["blocks", "items", "assets"]
 permissions = ["register_blocks", "register_items", "load_assets"]

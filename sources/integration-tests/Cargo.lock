@@ -1093,7 +1093,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solaris-plugin-integration-tests"
+name = "krasnokamen-plugin-integration-tests"
 version = "0.1.0"
 dependencies = [
  "mc-plugin-host",

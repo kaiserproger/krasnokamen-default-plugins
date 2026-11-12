@@ -1,11 +1,11 @@
-# Solaris Settlements: upstream-контракт overhaul
+# Krasnokamen Settlements: upstream-контракт overhaul
 
 Статус: **канонический upstream-контракт и сохранённое происхождение C1–C4/L1**, не отчёт о принятой gameplay.
 Редакция: 2026-10-01. Историческое исследование ниже относится к 2026-09-09; текущий source/status и autonomous campaign acceptance — в связанном IMPLEMENTATION_SPEC.
 
 Подтверждено владельцем: полноценное объединение поселений и найма жителей;
 развитие деревни в манор, замок или город; ориентиры Bannerlord / Total War /
-Manor Lords; **обязательный Solaris Loader**. После обнаружения ограничений
+Manor Lords; **обязательный Krasnokamen Loader**. После обнаружения ограничений
 API владелец выбрал сначала полный upstream-контракт, а не урезанное
 объединение существующих прототипов.
 
@@ -75,20 +75,20 @@ Core — **generic engine + reusable API only, zero gameplay plugins**. Settleme
 | Привязка к ближайшему жителю, временный токен, move/idle/release | [adapter](../solaris/crates/mc-net/src/script/villager.rs) | Восстановления того же бойца после истечения токена/рестарта |
 | set_block задаёт default state одного блока | [API documentation](../solaris/docs/PLUGINS.md) | Поворота лестниц, парных дверей/кроватей, безопасной стройки |
 | Storage CAS и inventory/storage commit | [API documentation](../solaris/docs/PLUGINS.md) | Crash-атомарности между журналом storage и playerdata |
-| Loader screen/hud, текст, статические кнопки и клавиши | [UI definition](../solaris-loader/loader-core/src/main/java/dev/solaris/loader/LoaderUiDefinition.java), [screen](../solaris-loader/loader-platform-common/src/main/java/dev/solaris/loader/minecraft/LoaderTextScreen.java) | Динамических списков отрядов, форм, выбора на местности |
+| Loader screen/hud, текст, статические кнопки и клавиши | [UI definition](../solaris-loader/loader-core/src/main/java/dev/krasnokamen/loader/LoaderUiDefinition.java), [screen](../solaris-loader/loader-platform-common/src/main/java/dev/krasnokamen/loader/minecraft/LoaderTextScreen.java) | Динамических списков отрядов, форм, выбора на местности |
 
-`solaris-towns` управляет объединениями **игроков** и земельными участками,
+`krasnokamen-towns` управляет объединениями **игроков** и земельными участками,
 а не NPC-поселениями. Он не поглощается и не удаляется автоматически.
 
 ## 2. Владение и итоговая поставка
 
-Итоговый пакет: `solaris-settlements`, `api = "0.7.0"`, один владелец
+Итоговый пакет: `krasnokamen-settlements`, `api = "0.7.0"`, один владелец
 поселений, рекрутов, доменных записей и клиентского bundle. Новые bounded API
 расширяют WIT/DTO контракт; произвольный доступ WASM-компонента к миру/ECS запрещён.
 
 | Репозиторий | Ответственность |
 | --- | --- |
-| `solaris-default-plugins` | Вся settlement/social/economic/town/claims/political policy/state, localized ledgers, certificates/warehouse bindings, Party/Army/House/contracts/Knowledge, bootstrap, product acceptance tests, authored blueprints/client declarations |
+| `krasnokamen-default-plugins` | Вся settlement/social/economic/town/claims/political policy/state, localized ledgers, certificates/warehouse bindings, Party/Army/House/contracts/Knowledge, bootstrap, product acceptance tests, authored blueprints/client declarations |
 | `../solaris` | Generic engine only: manifests, bounded world/structure/worksite API, native entities/HP/items/world journals, physical work/combat/permission constraints, receipts/fences/handoff/ticket admission и generic invariant harness; никаких gameplay plugins/tests |
 | `../solaris-loader` | Bounded декларативная презентация/input/доставка bundles и реальные client scenes; known-data map получает только разрешённый payload, без авторитетных денег/урона/строительства |
 
@@ -219,7 +219,7 @@ profile может иметь другого владельца. Нельзя у
   runtime_unavailable. Области уточняют код, но не возвращают false/nil без причины.
 - Неопределённый исход после durable append не объявляется отказом. Операция
   восстанавливается из журнала и сверяется запросом состояния.
-- `solaris.operation_status(request_id, operation_id)` возвращает owner-scoped
+- `krasnokamen.operation_status(request_id, operation_id)` возвращает owner-scoped
   сохранённый outcome любой мутации; missing result не требует повторного
   эффекта. При неизвестном id возвращается not_found, не guessed rejected.
 - Targeted результаты и изменения состояния доставляются владельцу; повторная
@@ -281,11 +281,11 @@ manifest. Generated ZIP, Mojang bytes и runtime state не коммитятся
 Bootstrap генерации должен иметь явный обратный путь в плагин:
 
 ```text
-solaris.list_settlement_sites(request_id, cursor, limit)
-solaris.query_settlement_site(request_id, site_id, cursor, limit)
-solaris.reserve_resident_site(request_id, operation_id, site_id, poi_id,
+krasnokamen.list_settlement_sites(request_id, cursor, limit)
+krasnokamen.query_settlement_site(request_id, site_id, cursor, limit)
+krasnokamen.reserve_resident_site(request_id, operation_id, site_id, poi_id,
     expected_site_revision)
-solaris.release_resident_site(request_id, operation_id, spawn_site_token)
+krasnokamen.release_resident_site(request_id, operation_id, spawn_site_token)
 ```
 
 Страницы до 64 записей, owner-scoped snapshot/cursor. В persistent site snapshot
@@ -308,14 +308,14 @@ Snapshot показывает свободные, зарезервированн
 Предлагаемые вызовы:
 
 ```text
-solaris.survey_site(request_id, dimension, bounds, purpose)
-solaris.prepare_structure(request_id, operation_id, site_id, blueprint_id,
+krasnokamen.survey_site(request_id, dimension, bounds, purpose)
+krasnokamen.prepare_structure(request_id, operation_id, site_id, blueprint_id,
     anchor, rotation, survey_token, expected_site_revision)
-solaris.advance_structure(request_id, operation_id, structure_id, stage,
+krasnokamen.advance_structure(request_id, operation_id, structure_id, stage,
     reservation_ref, expected_revision)
-solaris.pause_structure(request_id, operation_id, structure_id, expected_revision)
-solaris.cancel_structure(request_id, operation_id, structure_id, expected_revision)
-solaris.structure_status(request_id, structure_id)
+krasnokamen.pause_structure(request_id, operation_id, structure_id, expected_revision)
+krasnokamen.cancel_structure(request_id, operation_id, structure_id, expected_revision)
+krasnokamen.structure_status(request_id, structure_id)
 ```
 
 `survey_site` возвращает bounded snapshot: высоты/уклоны, воду, пригодные
@@ -398,12 +398,12 @@ cancel/reject и окончательного receipt watermark.
 ### 6.1 Идентичность и жизненный цикл
 
 ```text
-solaris.claim_resident(request_id, operation_id, actor_id, entity_uuid,
+krasnokamen.claim_resident(request_id, operation_id, actor_id, entity_uuid,
     expected_entity_revision)
-solaris.spawn_resident(request_id, operation_id, spawn_site_token, profile)
-solaris.query_residents(request_id, handles, cursor)
-solaris.release_resident(request_id, operation_id, handle, expected_revision)
-solaris.set_resident_pois(request_id, operation_id, handle,
+krasnokamen.spawn_resident(request_id, operation_id, spawn_site_token, profile)
+krasnokamen.query_residents(request_id, handles, cursor)
+krasnokamen.release_resident(request_id, operation_id, handle, expected_revision)
+krasnokamen.set_resident_pois(request_id, operation_id, handle,
     home_poi, work_poi, meeting_poi, expected_revision)
 ```
 
@@ -450,17 +450,17 @@ position при loaded, equipment summary, work/order state, lifecycle и revisi
 ### 6.2 Предметы и физические работы
 
 ```text
-solaris.query_owned_inventory(request_id, endpoint, expected_revision)
-solaris.transfer_owned_items(request_id, operation_id, actor_id,
+krasnokamen.query_owned_inventory(request_id, endpoint, expected_revision)
+krasnokamen.transfer_owned_items(request_id, operation_id, actor_id,
     execution_permit, transfers, expected_revisions)
-solaris.reserve_inventory_items(request_id, operation_id, endpoint,
+krasnokamen.reserve_inventory_items(request_id, operation_id, endpoint,
     resource_plan, expected_revision)
-solaris.inventory_reservation_status(request_id, reservation_ref)
-solaris.release_inventory_reservation(request_id, operation_id,
+krasnokamen.inventory_reservation_status(request_id, reservation_ref)
+krasnokamen.release_inventory_reservation(request_id, operation_id,
     reservation_ref, expected_revision)
-solaris.assign_resident_work(request_id, operation_id, handle,
+krasnokamen.assign_resident_work(request_id, operation_id, handle,
     work_order, expected_revision)
-solaris.cancel_resident_work(request_id, operation_id, handle,
+krasnokamen.cancel_resident_work(request_id, operation_id, handle,
     expected_revision)
 ```
 
@@ -501,9 +501,9 @@ cut_tree, mine, haul, craft, fish, tend_livestock, construct. Каждое им�
 ### 6.3 Приказы отрядам
 
 ```text
-solaris.issue_resident_order(request_id, operation_id, handles,
+krasnokamen.issue_resident_order(request_id, operation_id, handles,
     expected_order_revisions, order)
-solaris.cancel_resident_order(request_id, operation_id, handles,
+krasnokamen.cancel_resident_order(request_id, operation_id, handles,
     expected_order_revisions)
 ```
 
@@ -614,12 +614,12 @@ Screens декларативные, экономическая/военная п
 Предлагаемые API жизненного цикла представления:
 
 ```text
-solaris.open_client_view(request_id, player_id, owned_view_id, model)
-solaris.present_client_view(player_id, view_instance_id, expected_revision, model)
-solaris.close_client_view(player_id, view_instance_id)
-solaris.begin_client_selection(request_id, player_id, view_instance_id,
+krasnokamen.open_client_view(request_id, player_id, owned_view_id, model)
+krasnokamen.present_client_view(player_id, view_instance_id, expected_revision, model)
+krasnokamen.close_client_view(player_id, view_instance_id)
+krasnokamen.begin_client_selection(request_id, player_id, view_instance_id,
     view_revision, action_id, constraints)
-solaris.cancel_client_selection(player_id, selection_context_id)
+krasnokamen.cancel_client_selection(player_id, selection_context_id)
 on_loader_view_action(event)
 ```
 
@@ -713,14 +713,14 @@ Current core уже требует Loader ack/permissions/exact bundle identitie
 ## 9. Пакет и переход со старых плагинов
 
 Чистый cutover: `colony-villager-scaffold` + `settlement-prototype` →
-`solaris-settlements`; один manifest, storage owner, набор commands и bundle.
+`krasnokamen-settlements`; один manifest, storage owner, набор commands и bundle.
 Старые пакеты удаляются из deployed set только в финальной миграции.
 Не оставлять aliases, вторую authority или две копии persistent roster.
-`solaris-towns`, permissions/economy и пять членов standard-pack не меняются
+`krasnokamen-towns`, permissions/economy и пять членов standard-pack не меняются
 без отдельной необходимости; новый пакет не вызывает их сервисы.
 
 По умолчанию — **новый world directory**: текущий core закрепляет owner и
-ordered settlement plan в `solaris/world.json`; смена плана в старом мире
+ordered settlement plan в `krasnokamen/world.json`; смена плана в старом мире
 небезопасна. Никогда не стирать мир, не переписывать owner вручную и не
 генерировать новый профиль поверх старых чанков автоматически.
 

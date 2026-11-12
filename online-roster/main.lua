@@ -33,7 +33,7 @@ function on_player_command(event: any)
         request_id = request_id,
         player_id = event.player_id,
     }
-    solaris.list_online_players(request_id, query_limit)
+    krasnokamen.list_online_players(request_id, query_limit)
 end
 
 function on_player_online_result(event: any)
@@ -58,14 +58,14 @@ function on_player_online_result(event: any)
         }
     end
     last_batch = { kind = "open" }
-    solaris.open_inventory_menu(
+    krasnokamen.open_inventory_menu(
         player_id,
         pending.menu_id,
         "Online Players (" .. tostring(#event.players) .. ")",
         slots
     )
     if event.truncated then
-        solaris.send_message(player_id, "Online list truncated to 54 players.")
+        krasnokamen.send_message(player_id, "Online list truncated to 54 players.")
     end
 end
 

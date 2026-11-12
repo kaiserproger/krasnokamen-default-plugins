@@ -7,22 +7,22 @@
 //! protection, the announcement, the sweep deadline, the restart path and the
 //! zone removal - the parts this package actually owns.
 
-use mc_plugin_host::bindings::exports::solaris::plugin::events::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::events::{
     Event, EventContext, PlayerGraveCreated, StorageCasAnswered, StorageGetAnswered, TimerFired,
     ZoneCommandAnswered, ZoneCommandOutcome,
 };
-use mc_plugin_host::bindings::exports::solaris::plugin::lifecycle::InitContext;
-use mc_plugin_host::bindings::solaris::plugin::commands::{Command, MessageTarget};
-use mc_plugin_host::bindings::solaris::plugin::storage::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::lifecycle::InitContext;
+use mc_plugin_host::bindings::krasnokamen::plugin::commands::{Command, MessageTarget};
+use mc_plugin_host::bindings::krasnokamen::plugin::storage::{
     StorageCasOutcome, StorageGetOutcome, StorageRecord,
 };
-use mc_plugin_host::bindings::solaris::plugin::world_events::BlockPosition;
+use mc_plugin_host::bindings::krasnokamen::plugin::world_events::BlockPosition;
 use mc_plugin_host::{
     engine, linker, CompiledPlugin, HostServices, LogLevel, PluginInstance, PluginLimits,
     PluginStartup,
 };
 
-const API_VERSION: &str = "0.8.0";
+const API_VERSION: &str = "0.9.0";
 const PLUGIN_ID: &str = "graves";
 const PLAYER: &str = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
 const SESSION: u64 = 7;
@@ -48,7 +48,7 @@ impl HostServices for Services {
 }
 
 fn plugins_root() -> std::path::PathBuf {
-    if let Some(root) = std::env::var_os("SOLARIS_DEFAULT_PLUGINS_ROOT") {
+    if let Some(root) = std::env::var_os("KRASNOKAMEN_DEFAULT_PLUGINS_ROOT") {
         return std::path::PathBuf::from(root);
     }
     std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
