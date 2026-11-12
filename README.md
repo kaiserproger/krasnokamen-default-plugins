@@ -23,6 +23,8 @@ WebAssembly component packages: each deployed directory has `plugin.toml` +
 natively by the core server in `../solaris`; this repository ships no
 settlement component.
 
+> **Names.** The code still uses the Solaris names until the rename lands in the source tree: the package ids (`solaris-*`), `solaris:plugin@0.8.0`, the `solaris-v2` binary, `SOLARIS_*` variables and repository paths below are the current ones.
+
 ## Packages
 
 Standard pack (recommended startup order: permissions, essentials, economy,
