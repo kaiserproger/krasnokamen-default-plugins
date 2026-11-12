@@ -118,10 +118,13 @@ def start_server(core_root: Path, artifact_dir: Path, gate: str, package_root: P
     sys.path.insert(0, str(core_root))
     from tools.harness.runtime import stop_process, wait_port
 
+    # The runner (mem-run) points CARGO_TARGET_DIR at a shared slot; cargo_test above already honours it.
+    target_dir = Path(os.environ.get("CARGO_TARGET_DIR", core_root / "target"))
+    server_binary = (target_dir if target_dir.is_absolute() else core_root / target_dir) / "debug" / "krasnokamen"
     log_path = artifact_dir / f"{gate}-server.log"
     with log_path.open("wb") as log:
         server = subprocess.Popen(
-            [str(core_root / "target" / "debug" / "krasnokamen"), "--config", str(config)],
+            [str(server_binary), "--config", str(config)],
             cwd=core_root, stdin=subprocess.PIPE, stdout=log, stderr=subprocess.STDOUT,
             start_new_session=True,
         )
