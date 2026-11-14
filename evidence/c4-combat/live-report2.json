@@ -37,7 +37,7 @@
    "command": "/settlement buildings p1town",
    "ok": true,
    "observed": [
-    "house_sm_1 solaris:house_small funded"
+    "house_sm_1 krasnokamen:house_small funded"
    ]
   },
   {
@@ -53,7 +53,7 @@
    "command": "/settlement buildings p1town",
    "ok": true,
    "observed": [
-    "house_sm_1 solaris:house_small committed"
+    "house_sm_1 krasnokamen:house_small committed"
    ]
   },
   {

@@ -8,7 +8,7 @@
     "CP-065": "NO product code in this slice: no shot/cannon/powder/artillery command exists in owned modules; war_bow projectile mention lives in sibling military_slice_b_tests only"
   },
   "full_lib_suite": "173 passed, 3 failed — all 3 pre-existing in sibling lanes, zero in owned files: combat_tests::guard_requires_settlement_authority_and_attacks_only_the_issued_hostile, combat_tests::squad_order_admits_one_authorized_roster_and_reports_blocked_members, tests::refused_post_attachment_registry_write_preserves_the_original_uuid_without_readmission (lib_tests registry). No edits to combat*.rs or lib.rs by this slice.",
-  "headless_gate": "taskset -c 4-11 mem-run.sh cargo test --lib -- caravan_tests commerce_tests commerce_player_tests payment_mandate (sources/solaris-settlements)",
+  "headless_gate": "taskset -c 4-11 mem-run.sh cargo test --lib -- caravan_tests commerce_tests commerce_player_tests payment_mandate (sources/krasnokamen-settlements)",
   "headless_result": {
     "cases": [
       "caravan_tests::travel_membership_is_unique_by_native_identity_not_copied_provenance",
@@ -44,15 +44,15 @@
   "patch": [],
   "patch_note": "Zero worktree edits by this slice: all owned product files already staged in index (A), worktree matches index (git diff --owned empty). Patch = already-staged set below; no new diff to emit.",
   "staged_owned_files": [
-    "sources/solaris-settlements/src/caravan_runtime.rs",
-    "sources/solaris-settlements/src/cargo_transfer.rs",
-    "sources/solaris-settlements/src/commerce_player.rs",
-    "sources/solaris-settlements/src/commerce_player_runtime.rs",
-    "sources/solaris-settlements/src/commerce_player_tests.rs",
-    "sources/solaris-settlements/src/commerce_runtime.rs",
-    "sources/solaris-settlements/src/commerce_trade.rs",
-    "sources/solaris-settlements/src/payment_mandate.rs",
-    "sources/solaris-settlements/src/payment_mandate_runtime.rs"
+    "sources/krasnokamen-settlements/src/caravan_runtime.rs",
+    "sources/krasnokamen-settlements/src/cargo_transfer.rs",
+    "sources/krasnokamen-settlements/src/commerce_player.rs",
+    "sources/krasnokamen-settlements/src/commerce_player_runtime.rs",
+    "sources/krasnokamen-settlements/src/commerce_player_tests.rs",
+    "sources/krasnokamen-settlements/src/commerce_runtime.rs",
+    "sources/krasnokamen-settlements/src/commerce_trade.rs",
+    "sources/krasnokamen-settlements/src/payment_mandate.rs",
+    "sources/krasnokamen-settlements/src/payment_mandate_runtime.rs"
   ],
   "untouched_by_this_slice": [
     "lib.rs (large unstaged residents->npcs/world_structures rewrite belongs to another lane; no hunk from this slice)",

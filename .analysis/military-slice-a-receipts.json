@@ -1,5 +1,5 @@
 {
- "adapter": "solaris-client/.analysis/native10/native_r2_military.py",
+ "adapter": "krasnokamen-client/.analysis/native10/native_r2_military.py",
  "artifact": "military-slice-a-per-model-receipts",
  "headless_gate": "cargo test --lib military_slice_a_tests (mem-run.sh shared slot, taskset -c 4-11)",
  "headless_result": {
@@ -25,13 +25,13 @@
  },
  "full_lib_suite": "173 passed, 3 failed — all 3 pre-existing in sibling combat/registry work, reproduced with slice filters skipped (158 passed, same 3 failed): combat_tests::guard_requires_settlement_authority_and_attacks_only_the_issued_hostile, combat_tests::squad_order_admits_one_authorized_roster_and_reports_blocked_members, tests::refused_post_attachment_registry_write_preserves_the_original_uuid_without_readmission; NOT touched by this slice (no edits to combat*.rs, hire*.rs, production*.rs, military_catalog.rs)",
  "models": {
-  "solaris-settlements:arming_sword": {
+  "krasnokamen-settlements:arming_sword": {
    "carrier": "minecraft:paper",
    "max_stack": 1,
    "durability": 320,
    "natural_inputs": {"minecraft:iron_ingot": 2, "minecraft:stick": 1, "minecraft:leather": 1},
    "manufacture": {
-    "recipe": "solaris-settlements:arming_sword (+quality variants arming_sword_rough/ordinary/good/masterwork, rolled at admission)",
+    "recipe": "krasnokamen-settlements:arming_sword (+quality variants arming_sword_rough/ordinary/good/masterwork, rolled at admission)",
     "station": "minecraft:crafting_table",
     "duration_ticks": 320,
     "selectable": true,
@@ -46,13 +46,13 @@
    },
    "kit": "militia + default infantry: arming_sword(model,equipment-0) + separate emerald wage; vanilla iron_sword refused as non-canonical kit"
   },
-  "solaris-settlements:longsword": {
+  "krasnokamen-settlements:longsword": {
    "carrier": "minecraft:paper",
    "max_stack": 1,
    "durability": 280,
    "natural_inputs": {"minecraft:iron_ingot": 3, "minecraft:stick": 1, "minecraft:leather": 1},
    "manufacture": {
-    "recipe": "solaris-settlements:longsword (+quality variants longsword_rough/ordinary/good/masterwork, rolled at admission)",
+    "recipe": "krasnokamen-settlements:longsword (+quality variants longsword_rough/ordinary/good/masterwork, rolled at admission)",
     "station": "minecraft:crafting_table",
     "duration_ticks": 480,
     "selectable": true,
@@ -67,13 +67,13 @@
    },
    "kit": "infantry longsword loadout: longsword(model,equipment-0); two-handed kit refuses occupied offhand slot 1 before any move; exact model transfer once free"
   },
-  "solaris-settlements:spear": {
+  "krasnokamen-settlements:spear": {
    "carrier": "minecraft:paper",
    "max_stack": 1,
    "durability": 240,
    "natural_inputs": {"minecraft:iron_ingot": 1, "minecraft:stick": 2},
    "manufacture": {
-    "recipe": "solaris-settlements:spear (+quality variants spear_rough/ordinary/good/masterwork, rolled at admission)",
+    "recipe": "krasnokamen-settlements:spear (+quality variants spear_rough/ordinary/good/masterwork, rolled at admission)",
     "station": "minecraft:crafting_table",
     "duration_ticks": 240,
     "selectable": true,
@@ -92,12 +92,12 @@
  "stamina": "capacity 100.0, recovery 0.5/tick for all three; per-attack costs 12/22/16; no stamina_restore/refund field on any attack (swap/reconnect/deploy never restore)",
  "ruleset_basis": "OWNER_DECISIONS §1 values + Main RULESET DECISION (spear explicitly two-handed); proposal, not owner-admitted balance; war/balance/mounted (CP058/059/068) untouched",
  "patch": [
-  "sources/solaris-settlements/src/military_slice_a_tests.rs (new, 8 tests, slice-A models only; staged)",
-  "solaris-settlements/content-src/{arming_sword,longsword,spear}_{item,model}.json (staged; sha256+size verified against client-src assets)",
-  "solaris-settlements/content-src/r2_materials.json (staged; shared R2 atlas manifest)",
-  "solaris-settlements/client-src/assets/solaris-settlements/items/{arming_sword,longsword,spear}.json (staged)",
-  "solaris-settlements/client-src/assets/solaris-settlements/models/item/{arming_sword,longsword,spear}.json (staged)",
-  "solaris-settlements/client-src/assets/solaris-settlements/textures/item/r2_materials.png (staged; shared atlas bytes)",
+  "sources/krasnokamen-settlements/src/military_slice_a_tests.rs (new, 8 tests, slice-A models only; staged)",
+  "krasnokamen-settlements/content-src/{arming_sword,longsword,spear}_{item,model}.json (staged; sha256+size verified against client-src assets)",
+  "krasnokamen-settlements/content-src/r2_materials.json (staged; shared R2 atlas manifest)",
+  "krasnokamen-settlements/client-src/assets/krasnokamen-settlements/items/{arming_sword,longsword,spear}.json (staged)",
+  "krasnokamen-settlements/client-src/assets/krasnokamen-settlements/models/item/{arming_sword,longsword,spear}.json (staged)",
+  "krasnokamen-settlements/client-src/assets/krasnokamen-settlements/textures/item/r2_materials.png (staged; shared atlas bytes)",
   "lib.rs mod-line hunk NOT staged (left worktree for Main to sequence after slice-B: #[cfg(test)] mod military_slice_a_tests; between mod military_catalog; and mod military_slice_b_tests;)"
  ],
  "untouched_by_this_slice": [

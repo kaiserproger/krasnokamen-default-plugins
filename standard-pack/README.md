@@ -18,7 +18,7 @@ list every deployed id under `plugins.expected`, and run `krasnokamen --check`.
 There is no server-side bundled-selection list.
 
 For source verification, run
-`python3 tools/build_standard_pack.py --core-root /path/to/solaris --check`
+`python3 tools/build_standard_pack.py --core-root /path/to/krasnokamen --check`
 from this repository. It independently builds all seven shipped Rust guests
 (the five standard packages plus optional `basic-economy` and `krasnokamen-auth`) and encodes each
 component through that core checkout's contract encoder. The optional `chisel`

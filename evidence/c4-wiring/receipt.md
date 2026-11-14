@@ -1,6 +1,6 @@
-# Evidence receipt — solaris-settlements C4 wiring
+# Evidence receipt — krasnokamen-settlements C4 wiring
 
-Wave: wire the shipped `solaris-settlements` package to the C4 core APIs
+Wave: wire the shipped `krasnokamen-settlements` package to the C4 core APIs
 (`assign_resident_work` / `cancel_resident_work`, `issue_resident_order` /
 `cancel_resident_order`, `demobilize_resident`) plus the C1 resident
 `resident_equipment` / `resident_carry` endpoints. Scope: plugin policy and
@@ -10,13 +10,13 @@ Status: **plugin wiring complete and gate-green; live end-to-end combat proof
 not captured before the run budget closed.** The exact live steps observed and
 the blocked steps are recorded below. No core change was needed.
 
-## Changed files (inside `solaris-default-plugins`)
+## Changed files (inside `krasnokamen-default-plugins`)
 
 | file | before | after | delta |
 | --- | --- | --- | --- |
-| `solaris-settlements/main.lua` | 4224 | 5468 | +1244 |
-| `solaris-settlements/plugin.toml` | 22 | 26 | +4 |
-| `solaris-settlements/README.md` | 90 | 111 | +21 |
+| `krasnokamen-settlements/main.lua` | 4224 | 5468 | +1244 |
+| `krasnokamen-settlements/plugin.toml` | 22 | 26 | +4 |
+| `krasnokamen-settlements/README.md` | 90 | 111 | +21 |
 
 `plugin.toml`: added capabilities `resident_work`, `resident_orders` and the
 matching `required_features` (both are in the core `FEATURE_CAPABILITIES` set).
@@ -66,8 +66,8 @@ and status section match what the calls now do.
 
 1. **Real strict admission + Luau typecheck (core loader).**
    `config` at `/tmp/c4w/server.toml`: `plugins.directory = /tmp/c4w/plugins`,
-   `strict = true`, `expected = [solaris-permissions, solaris-essentials,
-   solaris-economy, solaris-towns, solaris-audit, solaris-settlements]`.
+   `strict = true`, `expected = [krasnokamen-permissions, krasnokamen-essentials,
+   krasnokamen-economy, krasnokamen-towns, krasnokamen-audit, krasnokamen-settlements]`.
    `target/debug/mc-server --check --config /tmp/c4w/server.toml` → **exit 0**;
    `discovered_plugins` lists all six, no warnings except the fresh
    `world_dir_missing_on_disk`.
@@ -81,7 +81,7 @@ and status section match what the calls now do.
    Server: `target/debug/mc-server --config /tmp/c4w/server.toml --no-console`
    on port 25577, fresh world `/tmp/c4w/world`, six-package directory.
    Client: `python3 -m tools.harness client` with
-   `SOLARIS_CLIENT_MCP_PORT=39107`, `SOLARIS_CLIENT_MCP_USERNAME=C4Probe`,
+   `KRASNOKAMEN_CLIENT_MCP_PORT=39107`, `KRASNOKAMEN_CLIENT_MCP_USERNAME=C4Probe`,
    driven through `tools.harness.mcp.McpClient` (`minecraft_connect`,
    `minecraft_wait_for_play`, `minecraft_send_chat` with `command: true`,
    `minecraft_observe`, `minecraft_list_entities`, `minecraft_scan_blocks`).
@@ -95,7 +95,7 @@ and status section match what the calls now do.
      `Adopted site_6_0_448887a6 (hamlet): 7 buildings, 8 points of interest, revision 0.`
    - `/settlement survey probetown plot` →
      `Survey settlement: plots=4096 water=0 claimed=false chunks=loaded tags=[].`
-   - `/settlement project probetown solaris:house_small here` →
+   - `/settlement project probetown krasnokamen:house_small here` →
      `Core refused the request: not_found.` — the project anchor was in cell
      (0,0) while the adopted candidate is at cell (6,0); core rejects an anchor
      whose cell has no settlement candidate. Probe placement, not a plugin bug.
