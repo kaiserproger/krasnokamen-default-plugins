@@ -198,26 +198,6 @@ dependencies = [
 ]
 
 [[package]]
-<<<<<<<< HEAD:sources/computer/Cargo.lock
-========
-name = "krasnokamen-auth-plugin"
-version = "0.1.0"
-dependencies = [
- "krasnokamen-plugin-sdk",
- "wit-bindgen",
-]
-
-[[package]]
-name = "krasnokamen-plugin-sdk"
-version = "0.8.0"
-dependencies = [
- "serde",
- "toml",
- "wit-bindgen",
-]
-
-[[package]]
->>>>>>>> stage0/rebrand/LedgerOpsCorePlugins:sources/krasnokamen-auth/Cargo.lock
 name = "syn"
 version = "3.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
