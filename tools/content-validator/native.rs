@@ -21,7 +21,7 @@ struct Services(String);
 impl HostServices for Services {
     fn log(
         &mut self,
-        _level: mc_plugin_host::bindings::solaris::plugin::types::LogLevel,
+        _level: mc_plugin_host::bindings::krasnokamen::plugin::types::LogLevel,
         message: &str,
     ) {
         eprintln!("{}: {message}", self.0);
@@ -70,7 +70,7 @@ fn blueprint_catalog(
         ));
     }
     let registry =
-        mc_world::BlockRegistry::from_report(&mc_data::blocks::solaris_required_blocks_report())?;
+        mc_world::BlockRegistry::from_report(&mc_data::blocks::krasnokamen_required_blocks_report())?;
     Ok(mc_worldgen::BlueprintCatalog::from_files(
         &registry, owner, &files,
     )?)
@@ -151,7 +151,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let id = package.manifest().plugin_id();
         let authored = package.root().join("structures");
         if authored.exists() {
-            let catalog = blueprint_catalog(&authored, "solaris")?;
+            let catalog = blueprint_catalog(&authored, "krasnokamen")?;
             blueprints.insert(
                 id.to_owned(),
                 catalog

@@ -1,4 +1,4 @@
-# Solaris Settlements — техническая спецификация реализации
+# Krasnokamen Settlements — техническая спецификация реализации
 
 Статус: **draft · проект**, 2026-10-01. Автономная MMO-кампания встроена в существующие R/CP, без claim о готовности runtime или принятой gameplay.
 Игровые требования: [SPECIFICATION.md](SPECIFICATION.md). Контент: [CONTENT_SPEC.md](CONTENT_SPEC.md).
@@ -7,19 +7,19 @@
 
 Историческая основа исследования 2026-09-15 (не текущий HEAD):
 
-- `solaris-default-plugins`: `1d7db97266ea0d69ce0b530a5e4253977db20932`;
-- `solaris`: `78b4f39d6a9363948c46f4983b243c9ce3fc97c9`;
-- `solaris-loader`: `3aaa92663ce8bc3e7de2859ad40ed357aacf3382`.
+- `krasnokamen-default-plugins`: `1d7db97266ea0d69ce0b530a5e4253977db20932`;
+- `krasnokamen`: `78b4f39d6a9363948c46f4983b243c9ce3fc97c9`;
+- `krasnokamen-loader`: `3aaa92663ce8bc3e7de2859ad40ed357aacf3382`.
 
 Эти идентификаторы сохраняют происхождение, не статус текущего дерева. Чужие незакоммиченные изменения не сбрасывать. Сводка ниже обновлена чтением manifest/README/подключённых исходников 2026-10-01; builds/tests/клиентские сценарии в документационной работе не запускались.
 
 ### 1.1 Компонентный пакет
 
-[plugin.toml](../../solaris-settlements/plugin.toml) объявляет `solaris-settlements`, version 1.0.0, API 0.7.0, entry `plugin.wasm`, события `operation.result`, `player.left`; текущие capabilities: `storage`, `player_queries`, `inventory_transfers`, `persistent_npcs`, `npc_work`, `npc_orders`, `world_structures`. Последние пять также required_features; worldgen selector отсутствует. Старые resident/world_sites/structure_operations имена — provenance, не текущая SDK authority.
+[plugin.toml](../../krasnokamen-settlements/plugin.toml) объявляет `krasnokamen-settlements`, version 1.0.0, API 0.7.0, entry `plugin.wasm`, события `operation.result`, `player.left`; текущие capabilities: `storage`, `player_queries`, `inventory_transfers`, `persistent_npcs`, `npc_work`, `npc_orders`, `world_structures`. Последние пять также required_features; worldgen selector отсутствует. Старые resident/world_sites/structure_operations имена — provenance, не текущая SDK authority.
 
 **Client bundle уже объявлен:** schema 2, `settlements-ui`, artifact `client/settlements.zip`, manifest size 4478, SHA-256 `b8517c4e3f09833327d761c305e3a4607b9079d49272b16783185167d45598ce`, Fabric/NeoForge/Forge. Объявлены views/view_actions/world_previews/world_selection/assets/sounds и соответствующие permissions. Это прочитанные metadata, не новая проверка hash/доставки/рендера; полная gameplay/UI acceptance pending.
 
-[sources/solaris-settlements/src/lib.rs](../../sources/solaris-settlements/src/lib.rs) подключает hire/demob/capture/combat/evacuation/demography/development/morale/view, production/technology/commerce/caravan и explicit paid-shipment runtime. Canonical registry-v2 использует `settlement-root-v2`, natural indexed immutable records и полный typed projection; v1 остаётся только явной offline migration/refusal границей. Product bounds 24 settlements/64 residents сохранены без поднятия native 4096-byte quota. Production schema-2 journal отдельно хранит bounded metadata/точные gross receipts, не inventory authority. Наличие путей — **in-code/unverified**, не accepted recurring economy, самостоятельные parties или campaign PASS; CP cursor §1.5.
+[sources/krasnokamen-settlements/src/lib.rs](../../sources/krasnokamen-settlements/src/lib.rs) подключает hire/demob/capture/combat/evacuation/demography/development/morale/view, production/technology/commerce/caravan и explicit paid-shipment runtime. Canonical registry-v2 использует `settlement-root-v2`, natural indexed immutable records и полный typed projection; v1 остаётся только явной offline migration/refusal границей. Product bounds 24 settlements/64 residents сохранены без поднятия native 4096-byte quota. Production schema-2 journal отдельно хранит bounded metadata/точные gross receipts, не inventory authority. Наличие путей — **in-code/unverified**, не accepted recurring economy, самостоятельные parties или campaign PASS; CP cursor §1.5.
 
 Caravan storage (source-only, **in-code/unverified**): каждое durable значение ≤ 4096 bytes (core `MAX_PLUGIN_STORAGE_VALUE_BYTES`; бюджет записи 3840). `settlement-caravan-index-v2` — единственный ограниченный индекс id (≤ 64 маршрутов, `paid` фиксирован при admission, `open` — подсказка планировщика); контракт каждой перевозки хранится отдельно в `settlement-caravan-v2/{id}`, а его native receipts + pending intent — в `settlement-caravan-v2/{id}/ledger` (порядок записи: контракт, затем ledger; восстановление идемпотентно повторно применяет native receipt). Завершённые контракты никогда не вытесняются: replay identity operation id и committed gross-delivery receipts сохраняются. Admission и резервирование груза отказывают (без native effect), если worst-case размер контракта/ledger на core-bound идентификаторов не помещается; финальная проверка `value.len() > 4096` в пути записи сообщает вместо over-cap CAS. Native version guard (escort start/cancel/payout) адресует ключ контракта этой перевозки, а не общий store. Migration нет (single-value `settlement-caravans-v1` не читается).
 
@@ -37,7 +37,7 @@ Rust component source собирает core-Wasm → component `plugin.wasm`; `s
 
 Постоянные resident handles, intent/result/operation_status, CAS и storage_scan, bounded inventories/reservations, site survey, staged construction, work/order DTO, декларативные клиентские bundles и точную проверку SHA-256. Эти механизмы — основа, не конкурирующие версии новой архитектуры.
 
-Не копировать `solaris-towns` в settlements: towns управляет игроками/землёй, а здесь NPC-общество. Не выдумывать cross-plugin money service. Не хранить фактическое содержимое склада одновременно в plugin ledger и chest.
+Не копировать `krasnokamen-towns` в settlements: towns управляет игроками/землёй, а здесь NPC-общество. Не выдумывать cross-plugin money service. Не хранить фактическое содержимое склада одновременно в plugin ledger и chest.
 
 ### 1.4 Capability audit и оставшиеся требования
 
@@ -48,11 +48,11 @@ Rust component source собирает core-Wasm → component `plugin.wasm`; `s
 | Rust/WASM 0.7 component + client declaration | **Есть в коде:** plugin.toml, README | Доказать deployment/совместимость/реальную UI-сцену отдельно; не объявлять full UI по ZIP |
 | Постоянные social/hire/demob/capture/household intents | **Есть в коде:** lib.rs modules, SettlementRegistry/SettlementResident | Campaign parties/politics/payroll/autonomy **требуются**, не выводятся из команд/модулей |
 | Registry 24/64, global CAS | **Есть в коде:** lib.rs `SETTLEMENT_REGISTRY_KEY`, `MAX_SETTLEMENTS`, `MAX_SETTLEMENT_RESIDENTS` | Локальные записи/indexes + offline миграция pending intents + измерение bytes/conflicts; поднятие констант не масштабирование |
-| Inventories и fences | **Есть в изменяемом коде, перечитано после cutover:** `crates/mc-script/wit/inventories.wit` endpoints PlayerInventory, Container{dimension,position}, NpcEquipment/NpcCarry; `sdk/rust/solaris-plugin-sdk/src/inventory_ops.rs` query/reserve/transfer + query_inventory_reservation/release_inventory_reservation | Product warehouse names/bindings только plugin mappings → real Container, без core warehouse handles. Native ownership/protection/state/image/capacity/reservation fences сохраняются; final integration/runtime evidence pending |
+| Inventories и fences | **Есть в изменяемом коде, перечитано после cutover:** `crates/mc-script/wit/inventories.wit` endpoints PlayerInventory, Container{dimension,position}, NpcEquipment/NpcCarry; `sdk/rust/krasnokamen-plugin-sdk/src/inventory_ops.rs` query/reserve/transfer + query_inventory_reservation/release_inventory_reservation | Product warehouse names/bindings только plugin mappings → real Container, без core warehouse handles. Native ownership/protection/state/image/capacity/reservation fences сохраняются; final integration/runtime evidence pending |
 | NPC identity/physical controls | **Исходная точка есть в коде:** resident/resident-order families и plugin commands; **согласованный target cutover, runtime proof pending:** NpcOperation/NpcOrderOperation, *_npc* SDK, query_npc_controls | Query identity/lifecycle и read-only controls не создают operation_id; Issue/CancelOrder/CancelWork replay по stable ID/fingerprint. Native controls — physical order/work/pending_work с revisions; roles/custody/morale/housing policy только plugin. Generic paid nonlethal ApplyHealthDelta связывает native health/material/receipt, не core лечебный ruleset; lethal effects идут existing combat. Party/Army parent и per-part outcomes plugin-owned |
 | Settlement-named API | **Историческая исходная точка:** settlement DTO/imports; **текущий прочитанный caller:** `lib.rs` использует `world_structures` SDK | Clean generic cutover без aliases/reexports; окончательный purge/API proof у core integration owner |
 | Certificate/warehouse функции | **Есть в текущем исходнике, unverified:** `lib.rs` BuildingOrigin, recognize/bind/check_worksite; `view.rs` live building page | Plugin policy/records/tests; native registered points/live checks. Runtime BUILD-05/07/ADD:ECO-02 pending, не PASS по файлам |
-| Bounded views/actions/markers/input | **Есть в коде:** core client-presentation.wit; LoaderViewModel.java (wire 3 pages/actions/reasons/markers), LoaderWidget.java (schema 2 tables/input/world marker); plugin client-src/solaris-client.json | Dedicated known-data campaign map, filtered reports/delivery и early work/escort UX **требуются**; markers/overview не доказывают их готовность |
+| Bounded views/actions/markers/input | **Есть в коде:** core client-presentation.wit; LoaderViewModel.java (wire 3 pages/actions/reasons/markers), LoaderWidget.java (schema 2 tables/input/world marker); plugin client-src/krasnokamen-client.json | Dedicated known-data campaign map, filtered reports/delivery и early work/escort UX **требуются**; markers/overview не доказывают их готовность |
 | Time/due/revision notifications | **Описано в проекте:** §§6.4/11 | Audit existing event/context/storage paths; durable deadlines/restart и missing producer notifications реализовать generic bounded API по потребителю |
 | Work tickets, native transit/spatial activation | **Описано в проекте; требуется campaign proof:** §9 | Generic admission/budget/area/authority epoch/recovery + product admissibility policy; не выдумывать method names или достаточность имеющегося unload |
 | Offscreen encounters/aggregate combat | **Требуется:** §9/§15.14 | Сначала physical tickets; aggregate допускается лишь после заранее определённого statistical gate, иначе measured physical cap |
@@ -145,7 +145,7 @@ Crosswalk A1–A8 сохранён в §14.0; §22 addition — **ADD:** стр�
 
 ### 2.1 Core Rust — общие авторитетные механики
 
-В `solaris`:
+В `krasnokamen`:
 
 - vanilla worldgen, chunk/region ownership и реальные блоки;
 - persistent entity lifecycle, identity, здоровье, инвентарь, equipment и mounts;
@@ -160,7 +160,7 @@ Core предоставляет **только generic engine + широкие r
 
 ### 2.2 Component-пакет — игровая политика
 
-В `solaris-default-plugins/solaris-settlements`:
+В `krasnokamen-default-plugins/krasnokamen-settlements`:
 
 - settlement/resident social/household/Party/Army/House/Realm records и membership indexes;
 - admission/bootstrap/принятие sites, domain building certificates и warehouse-binding decisions;
@@ -174,7 +174,7 @@ Core предоставляет **только generic engine + широкие r
 
 ### 2.3 Loader — клиентская презентация
 
-В `solaris-loader`:
+В `krasnokamen-loader`:
 
 - один проверенный контентный протокол и immutable activated registry;
 - widgets, каталоги, формы, selection/preview, карта известных данных;
@@ -195,28 +195,28 @@ Core обязан собираться без обоих siblings. Loader обя
 
 ### 3.1 Один продукт, один owner
 
-Итог — один `solaris-settlements` owner с server data + verified client content. Не разбивать 768 предметов на фиктивные плагины, чтобы обходить квоты. Несколько bundles допустимы для организации доставки, но их aggregate validation едина.
+Итог — один `krasnokamen-settlements` owner с server data + verified client content. Не разбивать 768 предметов на фиктивные плагины, чтобы обходить квоты. Несколько bundles допустимы для организации доставки, но их aggregate validation едина.
 
 Существующий manifest уже объявляет bundle и попадает под Loader-ack contract; не выдумывать ещё несуществующий optionality flag или второй client decoder. Финальный расширенный контентный профиль внедряется только после compatible core/Loader cutover и actual evidence. Server-only отсутствие declarations не поддерживается как скрытый fallback полной игры.
 
 ### 3.2 Текущая структура авторских исходников
 
 ```text
-solaris-settlements/
+krasnokamen-settlements/
   plugin.toml
   plugin.wasm
   README.md
   structures/
   client/settlements.zip
-  client-src/solaris-client.json
+  client-src/krasnokamen-client.json
 sources/
-  solaris-settlements/
+  krasnokamen-settlements/
     Cargo.toml
     Cargo.lock
     src/lib.rs
 ```
 
-`solaris-settlements/` — строгий deployable package. `sources/` не
+`krasnokamen-settlements/` — строгий deployable package. `sources/` не
 развёртывается сервером; он собирает Rust raw Wasm и кодирует
 `plugin.wasm`. Подключённые Rust domain modules и declared client artifacts — реальная исходная структура; не возвращать `main.lua` execution. Присутствующий bundle/required handshake не является accepted полным Loader UI.
 
@@ -366,7 +366,7 @@ Immutable native recipe/workstation predicates расширяют настоящ
 Новые outcome fields: committed portion id, exact inputs consumed, exact outputs/materialized intermediate, wear deltas, resulting endpoint fences, pause reason, recipe revision. Handler получает только bounded агрегат/страницу, а не полную историю мастерской.
 
 Текущий исполнимый источник provisional gameplay decisions — plugin-owned
-`sources/solaris-settlements/src/production_ruleset.json`; определения native
+`sources/krasnokamen-settlements/src/production_ruleset.json`; определения native
 рецептов — `production_recipes.json`. Root `configure` публикует
 `production::authored_recipes()` через generic startup `work_recipes`; fixture и
 реальный server startup принимают ту же contribution через native item/work facts.

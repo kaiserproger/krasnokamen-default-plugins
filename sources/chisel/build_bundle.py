@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build the chisel Loader client bundle (stdlib only).
 
-Reads ``client-src/`` (``solaris-client.json`` index template plus asset
+Reads ``client-src/`` (``krasnokamen-client.json`` index template plus asset
 files), writes a deterministic zip to ``chisel/client/chisel-content.zip``
-with ``solaris-client.json`` as the first entry and the assets after it in
+with ``krasnokamen-client.json`` as the first entry and the assets after it in
 sorted order (fixed 2000-01-01 timestamps), then rewrites the sha256 /
 size_bytes entries of the index and of ``chisel/plugin.toml``.
 
@@ -72,7 +72,7 @@ def write_zip(index_bytes: bytes, target: Path) -> bytes:
     assert len(set(names)) == len(names), "duplicate asset path"
     assert names == sorted(names), "assets must be sorted for determinism"
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        info = zipfile.ZipInfo("solaris-client.json", date_time=FIXED_DATE)
+        info = zipfile.ZipInfo("krasnokamen-client.json", date_time=FIXED_DATE)
         info.compress_type = zipfile.ZIP_DEFLATED
         info.create_system = 3
         archive.writestr(info, index_bytes)
@@ -119,9 +119,9 @@ def main() -> None:
     artifact = write_zip(index_bytes, target)
     with zipfile.ZipFile(target) as archive:
         names = archive.namelist()
-        assert names[0] == "solaris-client.json", names
+        assert names[0] == "krasnokamen-client.json", names
         assert names[1:] == sorted(names[1:]), names
-        assert archive.read("solaris-client.json") == index_bytes
+        assert archive.read("krasnokamen-client.json") == index_bytes
     rewrite_toml_manifest(sha256(artifact), len(artifact))
     print(f"wrote {target} ({len(artifact)} bytes, sha256 {sha256(artifact)})")
 

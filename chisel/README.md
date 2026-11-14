@@ -17,14 +17,14 @@ durability 250, 1 wear per use), crafted from an iron ingot over a stick
 The client bundle (item definition, model and texture) is optional:
 `required = false` in `plugin.toml`. Plain vanilla Java clients may join;
 they do not download the Loader bundle and do not get its custom presentation.
-Native Solaris and Fabric/NeoForge/Forge Solaris Loader clients can negotiate
+Native Krasnokamen and Fabric/NeoForge/Forge Krasnokamen Loader clients can negotiate
 the bundle. The core harness checks plain Java admission and chat with
 `chisel --client java --windowed`; `chisel --client native --windowed` checks
 the block-tool conversions, wear and slab grants.
 
 Install the `chisel` package in `[plugins].directory` — it is opt-in and not
 part of the five-package standard pack. Another installed package with a
-required client bundle can still require Solaris Loader for the server.
+required client bundle can still require Krasnokamen Loader for the server.
 
 Build the component with
 `tools/build_standard_pack.py --core-root ../solaris --package chisel`;

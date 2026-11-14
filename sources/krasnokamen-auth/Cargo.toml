@@ -1,0 +1,13 @@
+[package]
+name = "krasnokamen-auth-plugin"
+description = "Offline-mode session authentication component."
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+krasnokamen-plugin-sdk = { path = "../../../solaris/sdk/rust/krasnokamen-plugin-sdk" }
+wit-bindgen = "0.62"

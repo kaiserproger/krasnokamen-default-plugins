@@ -1,4 +1,4 @@
-//! Focused component acceptance for the `solaris-auth` package.
+//! Focused component acceptance for the `krasnokamen-auth` package.
 //!
 //! Mirrors `plugin_standard_pack.rs`'s Wasmtime instance setup, but drives the
 //! authentication guest directly: join arms one `auth-<session>` timeout and
@@ -8,16 +8,16 @@
 //! the timeout gates the pending session. The native fail-closed session gate
 //! is the only enforcement path; the guest declares no build hook.
 
-use mc_plugin_host::bindings::exports::solaris::plugin::events::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::events::{
     CommandInvoked, Event, EventContext, PlayerJoined, PlayerLeft, StorageCasAnswered,
     StorageGetAnswered, TimerFired,
 };
-use mc_plugin_host::bindings::exports::solaris::plugin::lifecycle::InitContext;
-use mc_plugin_host::bindings::solaris::plugin::commands::{Command, MessageTarget};
-use mc_plugin_host::bindings::solaris::plugin::storage::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::lifecycle::InitContext;
+use mc_plugin_host::bindings::krasnokamen::plugin::commands::{Command, MessageTarget};
+use mc_plugin_host::bindings::krasnokamen::plugin::storage::{
     StorageCasOutcome, StorageGetOutcome, StorageRecord,
 };
-use mc_plugin_host::bindings::solaris::plugin::types::Position;
+use mc_plugin_host::bindings::krasnokamen::plugin::types::Position;
 use mc_plugin_host::{
     engine, linker, CompiledPlugin, HostServices, LogLevel, PluginInstance, PluginLimits,
     PluginStartup,
@@ -50,7 +50,7 @@ impl HostServices for Services {
 }
 
 fn plugins_root() -> std::path::PathBuf {
-    if let Some(root) = std::env::var_os("SOLARIS_DEFAULT_PLUGINS_ROOT") {
+    if let Some(root) = std::env::var_os("KRASNOKAMEN_DEFAULT_PLUGINS_ROOT") {
         return std::path::PathBuf::from(root);
     }
     std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -65,11 +65,11 @@ fn plugins_root() -> std::path::PathBuf {
 fn instance(id: &str) -> (PluginInstance<Services>, mc_plugin_host::EpochTicker) {
     let package = plugins_root().join(id);
     let component =
-        std::fs::read(package.join("plugin.wasm")).expect("solaris-auth component is installed");
+        std::fs::read(package.join("plugin.wasm")).expect("krasnokamen-auth component is installed");
     let limits = PluginLimits::default();
     let engine = engine(&limits).expect("host engine builds");
     let compiled = CompiledPlugin::compile(&engine, &component, &limits, API_VERSION)
-        .expect("solaris-auth compiles under the current host contract");
+        .expect("krasnokamen-auth compiles under the current host contract");
     let ticker =
         mc_plugin_host::EpochTicker::start(engine.clone(), std::time::Duration::from_millis(25))
             .expect("real callback watchdog starts");
@@ -84,7 +84,7 @@ fn instance(id: &str) -> (PluginInstance<Services>, mc_plugin_host::EpochTicker)
     assert!(
         startup
             .configure("")
-            .expect("solaris-auth configuration is accepted")
+            .expect("krasnokamen-auth configuration is accepted")
             .is_none(),
         "auth declares no startup contribution"
     );
@@ -105,7 +105,7 @@ fn instance(id: &str) -> (PluginInstance<Services>, mc_plugin_host::EpochTicker)
                     world_fingerprint: String::new(),
                 },
             )
-            .expect("solaris-auth init is accepted")
+            .expect("krasnokamen-auth init is accepted")
             .into_commands()
             .is_empty(),
         "auth init emits no commands"
@@ -369,21 +369,21 @@ fn commit_register(plugin: &mut PluginInstance<Services>) -> String {
 
 #[test]
 fn join_arms_timeout_and_loads_lowercase_key() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     join_and_read(&mut plugin);
     plugin.shutdown().expect("clean component shutdown");
 }
 
 #[test]
 fn register_hashes_then_cas_before_authenticating() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     commit_register(&mut plugin);
     plugin.shutdown().expect("clean component shutdown");
 }
 
 #[test]
 fn relog_login_authenticates_with_committed_value() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     let value = commit_register(&mut plugin);
     let gone = plugin
         .on_events(context(1), &[left()])
@@ -431,7 +431,7 @@ fn relog_login_authenticates_with_committed_value() {
 
 #[test]
 fn wrong_password_kick_at_five() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     let value = commit_register(&mut plugin);
     let _ = plugin
         .on_events(context(1), &[left()])
@@ -477,7 +477,7 @@ fn wrong_password_kick_at_five() {
 
 #[test]
 fn auth_timeout_disconnects() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     join_and_read(&mut plugin);
     let done = plugin
         .on_events(
@@ -502,7 +502,7 @@ fn auth_timeout_disconnects() {
 
 #[test]
 fn pending_commands_wait_for_load() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     let read = join_and_read(&mut plugin);
     let early = plugin
         .on_events(
@@ -529,7 +529,7 @@ fn pending_commands_wait_for_load() {
 
 #[test]
 fn changepassword_rekeys_and_relogin_uses_new() {
-    let (mut plugin, _ticker) = instance("solaris-auth");
+    let (mut plugin, _ticker) = instance("krasnokamen-auth");
     let _ = commit_register(&mut plugin);
     let saved = plugin
         .on_events(

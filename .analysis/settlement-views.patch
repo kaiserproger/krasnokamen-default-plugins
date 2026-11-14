@@ -1,20 +1,20 @@
-diff --git a/sources/solaris-settlements/src/view.rs b/sources/solaris-settlements/src/view.rs
+diff --git a/sources/krasnokamen-settlements/src/view.rs b/sources/krasnokamen-settlements/src/view.rs
 index 419a020..7789960 100644
---- a/sources/solaris-settlements/src/view.rs
-+++ b/sources/solaris-settlements/src/view.rs
+--- a/sources/krasnokamen-settlements/src/view.rs
++++ b/sources/krasnokamen-settlements/src/view.rs
 @@ -20,6 +20,7 @@ use crate::{
  };
  
- pub(super) const VIEW_ID: &str = "solaris-settlements:overview";
-+pub(super) const PUBLIC_VIEW_ID: &str = "solaris-settlements:player_contracts";
- pub(super) const REFRESH: &str = "solaris-settlements:refresh";
- pub(super) const NEXT: &str = "solaris-settlements:page_next";
- pub(super) const PREVIOUS: &str = "solaris-settlements:page_prev";
+ pub(super) const VIEW_ID: &str = "krasnokamen-settlements:overview";
++pub(super) const PUBLIC_VIEW_ID: &str = "krasnokamen-settlements:player_contracts";
+ pub(super) const REFRESH: &str = "krasnokamen-settlements:refresh";
+ pub(super) const NEXT: &str = "krasnokamen-settlements:page_next";
+ pub(super) const PREVIOUS: &str = "krasnokamen-settlements:page_prev";
 @@ -852,7 +853,7 @@ impl Settlements {
      }
  
      pub(super) fn view_request(&mut self, request: &LoaderViewRequest) -> Vec<Command> {
--        let pane = if request.request_kind == "solaris-settlements:player_contracts" {
+-        let pane = if request.request_kind == "krasnokamen-settlements:player_contracts" {
 +        let pane = if request.request_kind == PUBLIC_VIEW_ID {
              DOMAINS.len()
          } else if let Some(pane) = DOMAINS
@@ -23,15 +23,15 @@ index 419a020..7789960 100644
          commands.push(open_client_view(
              &request,
              session,
--            "solaris-settlements:player_contracts",
+-            "krasnokamen-settlements:player_contracts",
 +            PUBLIC_VIEW_ID,
              state.model(),
          ));
          self.public_contract_views.insert(session, state);
-diff --git a/sources/solaris-settlements/src/view_tests.rs b/sources/solaris-settlements/src/view_tests.rs
+diff --git a/sources/krasnokamen-settlements/src/view_tests.rs b/sources/krasnokamen-settlements/src/view_tests.rs
 index 8fb7073..81f9dd9 100644
---- a/sources/solaris-settlements/src/view_tests.rs
-+++ b/sources/solaris-settlements/src/view_tests.rs
+--- a/sources/krasnokamen-settlements/src/view_tests.rs
++++ b/sources/krasnokamen-settlements/src/view_tests.rs
 @@ -1297,3 +1297,82 @@ fn selected_status_is_independent_of_full_active_index_and_zero_need_cannot_be_a
          crate::commerce_player::MAX_OFFERS
      );
@@ -39,7 +39,7 @@ index 8fb7073..81f9dd9 100644
 +
 +#[test]
 +fn public_entry_opens_observed_public_view_not_overview() {
-+    use solaris_plugin_sdk::events::{
++    use krasnokamen_plugin_sdk::events::{
 +        ClientViewOpened, ClientViewOutcome, LoaderViewRequest, OnlinePlayersAnswered, ViewOpened,
 +    };
 +
@@ -105,7 +105,7 @@ index 8fb7073..81f9dd9 100644
 +
 +#[test]
 +fn overview_key_still_routes_to_member_pane_not_public() {
-+    use solaris_plugin_sdk::events::LoaderViewRequest;
++    use krasnokamen_plugin_sdk::events::LoaderViewRequest;
 +
 +    let mut plugin = Settlements::default();
 +    let _ = plugin.view_request(&LoaderViewRequest {

@@ -1,6 +1,6 @@
 [package]
 name = "basic-economy-plugin"
-description = "Solaris Basic Economy WebAssembly component source."
+description = "Krasnokamen Basic Economy WebAssembly component source."
 version = "0.4.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -9,6 +9,6 @@ license = "MIT OR Apache-2.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-solaris-plugin-sdk = { path = "../../../solaris/sdk/rust/solaris-plugin-sdk" }
+krasnokamen-plugin-sdk = { path = "../../../solaris/sdk/rust/krasnokamen-plugin-sdk" }
 toml = "0.8"
 wit-bindgen = "0.62"

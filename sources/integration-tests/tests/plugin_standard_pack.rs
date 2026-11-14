@@ -8,20 +8,20 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use mc_plugin_host::bindings::exports::solaris::plugin::events::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::events::{
     CommandInvoked, Event, EventContext, OperationAnswered, OperationOutcome, OperationPayload,
     OperationRefused, StorageCasAnswered, StorageGetAnswered, ZoneCommandAnswered,
     ZoneCommandOutcome,
 };
-use mc_plugin_host::bindings::exports::solaris::plugin::lifecycle::InitContext;
-use mc_plugin_host::bindings::solaris::plugin::commands::{
+use mc_plugin_host::bindings::exports::krasnokamen::plugin::lifecycle::InitContext;
+use mc_plugin_host::bindings::krasnokamen::plugin::commands::{
     Command, MessageTarget, StorageMutation,
 };
-use mc_plugin_host::bindings::solaris::plugin::operation_types::OperationFailure;
-use mc_plugin_host::bindings::solaris::plugin::storage::{
+use mc_plugin_host::bindings::krasnokamen::plugin::operation_types::OperationFailure;
+use mc_plugin_host::bindings::krasnokamen::plugin::storage::{
     StorageCasOutcome, StorageGetOutcome, StorageRecord,
 };
-use mc_plugin_host::bindings::solaris::plugin::types::Position;
+use mc_plugin_host::bindings::krasnokamen::plugin::types::Position;
 use mc_plugin_host::{
     CompiledPlugin, DeploymentConfig, DiscoveryMode, HostQueues, HostServices, LogLevel,
     NoSessions, PlayerSessions, PluginInstance, PluginLimits, PluginStartup, engine, linker,
@@ -32,14 +32,14 @@ use mc_script::{
 };
 
 const STANDARD_PACK: [(&str, &[&str]); 5] = [
-    ("solaris-permissions", &["storage"]),
+    ("krasnokamen-permissions", &["storage"]),
     (
-        "solaris-essentials",
+        "krasnokamen-essentials",
         &["storage", "player_teleport", "player_queries"],
     ),
-    ("solaris-economy", &["storage", "storage_batches"]),
-    ("solaris-towns", &["storage", "zones", "player_queries"]),
-    ("solaris-audit", &["storage"]),
+    ("krasnokamen-economy", &["storage", "storage_batches"]),
+    ("krasnokamen-towns", &["storage", "zones", "player_queries"]),
+    ("krasnokamen-audit", &["storage"]),
 ];
 
 const API_VERSION: &str = "0.8.0";
@@ -130,7 +130,7 @@ fn process_cpu_ticks() -> (u64, u64) {
 }
 
 fn plugins_root() -> PathBuf {
-    if let Some(root) = std::env::var_os("SOLARIS_DEFAULT_PLUGINS_ROOT") {
+    if let Some(root) = std::env::var_os("KRASNOKAMEN_DEFAULT_PLUGINS_ROOT") {
         return PathBuf::from(root);
     }
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -335,11 +335,11 @@ fn session_message(commands: Vec<Command>) -> String {
 #[ignore = "requires the explicit first-party sibling integration gate"]
 fn standard_components_preserve_their_durable_initialization_keys() {
     for (id, expected_key) in [
-        ("solaris-permissions", Some("assignments-v1")),
-        ("solaris-essentials", None),
-        ("solaris-economy", Some("ledger-v1")),
-        ("solaris-towns", Some("towns-v1")),
-        ("solaris-audit", Some("actions-v1")),
+        ("krasnokamen-permissions", Some("assignments-v1")),
+        ("krasnokamen-essentials", None),
+        ("krasnokamen-economy", Some("ledger-v1")),
+        ("krasnokamen-towns", Some("towns-v1")),
+        ("krasnokamen-audit", Some("actions-v1")),
     ] {
         let (mut plugin, commands) = instance(id);
         match expected_key {
@@ -356,7 +356,7 @@ fn standard_components_preserve_their_durable_initialization_keys() {
 #[test]
 #[ignore = "requires the explicit first-party sibling integration gate"]
 fn standard_component_commands_keep_declared_state_boundaries() {
-    let (mut essentials, init) = instance("solaris-essentials");
+    let (mut essentials, init) = instance("krasnokamen-essentials");
     assert!(
         init.is_empty(),
         "essentials initializes without a global storage read"
@@ -374,7 +374,7 @@ fn standard_component_commands_keep_declared_state_boundaries() {
 
     for (id, name, arguments, raw_arguments, operator, expected) in [
         (
-            "solaris-permissions",
+            "krasnokamen-permissions",
             "perm",
             vec!["groups"],
             "groups",
@@ -382,7 +382,7 @@ fn standard_component_commands_keep_declared_state_boundaries() {
             "Permissions are still loading.",
         ),
         (
-            "solaris-economy",
+            "krasnokamen-economy",
             "money",
             Vec::new(),
             "",
@@ -390,7 +390,7 @@ fn standard_component_commands_keep_declared_state_boundaries() {
             "Economy is still loading.",
         ),
         (
-            "solaris-towns",
+            "krasnokamen-towns",
             "town",
             Vec::new(),
             "",
@@ -398,7 +398,7 @@ fn standard_component_commands_keep_declared_state_boundaries() {
             "Towns are still loading.",
         ),
         (
-            "solaris-audit",
+            "krasnokamen-audit",
             "audit",
             Vec::new(),
             "",
@@ -424,7 +424,7 @@ fn standard_component_commands_keep_declared_state_boundaries() {
 #[test]
 #[ignore = "requires the explicit first-party sibling integration gate"]
 fn standard_components_apply_normal_storage_aware_commands() {
-    let (mut permissions, init) = instance("solaris-permissions");
+    let (mut permissions, init) = instance("krasnokamen-permissions");
     let (request, key) = storage_get(init);
     assert_eq!(key, "assignments-v1");
     assert!(
@@ -441,7 +441,7 @@ fn standard_components_apply_normal_storage_aware_commands() {
     assert_eq!(session_message(groups), "Groups: admin, moderator, player");
     permissions.shutdown().expect("clean component shutdown");
 
-    let (mut economy, init) = instance("solaris-economy");
+    let (mut economy, init) = instance("krasnokamen-economy");
     let (request, key) = storage_get(init);
     assert_eq!(key, "ledger-v1");
     assert!(
@@ -458,7 +458,7 @@ fn standard_components_apply_normal_storage_aware_commands() {
     assert_eq!(session_message(balance), "Balance: 100 coins.");
     economy.shutdown().expect("clean component shutdown");
 
-    let (mut towns, init) = instance("solaris-towns");
+    let (mut towns, init) = instance("krasnokamen-towns");
     let (request, key) = storage_get(init);
     assert_eq!(key, "towns-v1");
     assert!(
@@ -484,7 +484,7 @@ fn standard_components_apply_normal_storage_aware_commands() {
     assert_eq!(session_message(created), "Town oak created.");
     towns.shutdown().expect("clean component shutdown");
 
-    let (mut audit, init) = instance("solaris-audit");
+    let (mut audit, init) = instance("krasnokamen-audit");
     let (request, key) = storage_get(init);
     assert_eq!(key, "actions-v1");
     assert!(
@@ -504,7 +504,7 @@ fn standard_components_apply_normal_storage_aware_commands() {
     );
     audit.shutdown().expect("clean component shutdown");
 
-    let (mut essentials, _) = instance("solaris-essentials");
+    let (mut essentials, _) = instance("krasnokamen-essentials");
     let read = essentials
         .on_events(context(1), &[command("sethome", &["base"], "base", false)])
         .expect("sethome requests its durable state")
@@ -528,7 +528,7 @@ fn standard_components_apply_normal_storage_aware_commands() {
 #[test]
 #[ignore = "requires the explicit first-party sibling integration gate"]
 fn standard_components_report_durable_conflicts() {
-    let (mut essentials, _) = instance("solaris-essentials");
+    let (mut essentials, _) = instance("krasnokamen-essentials");
     let read = essentials
         .on_events(context(1), &[command("sethome", &["base"], "base", false)])
         .expect("sethome requests durable state")
@@ -549,7 +549,7 @@ fn standard_components_report_durable_conflicts() {
     );
     essentials.shutdown().expect("clean component shutdown");
 
-    let (mut towns, init) = instance("solaris-towns");
+    let (mut towns, init) = instance("krasnokamen-towns");
     let (request, _) = storage_get(init);
     assert!(
         towns
@@ -597,7 +597,7 @@ fn towns_trust_and_flags_rewrite_every_claim_allow_list() {
     const GUEST: &str = "11111111-2222-3333-4444-555555555555";
     let leader = PLAYER.replace('-', "");
     let guest = GUEST.replace('-', "");
-    let (mut towns, init) = instance("solaris-towns");
+    let (mut towns, init) = instance("krasnokamen-towns");
     let (request, _) = storage_get(init);
     towns
         .on_events(context(1), &[storage_read(request)])
@@ -686,7 +686,7 @@ fn towns_trust_and_flags_rewrite_every_claim_allow_list() {
 #[test]
 #[ignore = "requires the explicit first-party sibling integration gate"]
 fn economy_payment_uses_durable_receipt_and_reloads_after_a_lost_reply() {
-    let (mut economy, init) = instance("solaris-economy");
+    let (mut economy, init) = instance("krasnokamen-economy");
     let (request, key) = storage_get(init);
     assert_eq!(key, "ledger-v1");
     let actor = PLAYER.replace('-', "");
@@ -749,7 +749,7 @@ fn economy_payment_uses_durable_receipt_and_reloads_after_a_lost_reply() {
     // receipt and the actual server route are exercised by separate tests.
     economy.shutdown().unwrap();
 
-    let (mut replacement, init) = instance("solaris-economy");
+    let (mut replacement, init) = instance("krasnokamen-economy");
     let (request, _) = storage_get(init);
     assert!(
         replacement
@@ -879,11 +879,11 @@ async fn all_shipped_components_start_together_under_the_current_host() {
             .collect::<Vec<_>>(),
         [
             "basic-economy",
-            "solaris-audit",
-            "solaris-economy",
-            "solaris-essentials",
-            "solaris-permissions",
-            "solaris-towns",
+            "krasnokamen-audit",
+            "krasnokamen-economy",
+            "krasnokamen-essentials",
+            "krasnokamen-permissions",
+            "krasnokamen-towns",
         ],
         "the running catalog contains exactly the six shipped components"
     );
@@ -1067,7 +1067,7 @@ async fn standard_pack_reports_normal_and_event_storm_command_delivery() {
     let counters = host.stop();
     let economy = counters
         .iter()
-        .find(|(id, _)| id == "solaris-economy")
+        .find(|(id, _)| id == "krasnokamen-economy")
         .map(|(_, counters)| counters)
         .expect("the actual economy package remains hosted");
     assert!(
@@ -1154,11 +1154,11 @@ async fn standard_pack_reloads_as_one_strict_component_candidate() {
             .map(|package| package.plugin_id())
             .collect::<Vec<_>>(),
         [
-            "solaris-audit",
-            "solaris-economy",
-            "solaris-essentials",
-            "solaris-permissions",
-            "solaris-towns",
+            "krasnokamen-audit",
+            "krasnokamen-economy",
+            "krasnokamen-essentials",
+            "krasnokamen-permissions",
+            "krasnokamen-towns",
         ],
         "the running catalog has only the strict standard pack"
     );

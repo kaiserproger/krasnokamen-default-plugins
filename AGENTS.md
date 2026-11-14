@@ -1,4 +1,4 @@
-# AGENTS — solaris-default-plugins
+# AGENTS — krasnokamen-default-plugins
 
 Independent sibling of `../solaris` (core). Owns production WebAssembly
 component plugin packages only. Core loads these from a deployed

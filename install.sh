@@ -2,7 +2,7 @@
 set -euo pipefail
 
 fail() {
-  printf 'Solaris plugins: %s\n' "$*" >&2
+  printf 'Krasnokamen plugins: %s\n' "$*" >&2
   exit 1
 }
 
@@ -32,7 +32,7 @@ done
 
 source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 if [[ "${#packages[@]}" -eq 0 ]]; then
-  packages=(solaris-permissions solaris-essentials solaris-economy solaris-towns solaris-audit)
+  packages=(krasnokamen-permissions krasnokamen-essentials krasnokamen-economy krasnokamen-towns krasnokamen-audit)
 fi
 
 declare -A selected=()
@@ -48,7 +48,7 @@ done
 
 mkdir -p -- "$destination"
 destination="$(cd -- "$destination" && pwd)"
-staging="$(mktemp -d "$(dirname -- "$destination")/.solaris-plugins.XXXXXX")"
+staging="$(mktemp -d "$(dirname -- "$destination")/.krasnokamen-plugins.XXXXXX")"
 trap 'rm -rf -- "$staging"' EXIT
 
 for package in "${packages[@]}"; do
@@ -62,4 +62,4 @@ done
 
 printf '\nSet [plugins].directory to %s and include these ids in plugins.expected:\n' "$destination"
 printf '  %s\n' "${packages[@]}"
-printf '%s\n' 'Keep any other deployed ids in that list. Run solaris --check --config server.toml before starting.'
+printf '%s\n' 'Keep any other deployed ids in that list. Run krasnokamen --check --config server.toml before starting.'

@@ -2,17 +2,17 @@
 //!
 //! The component retains Basic Economy's package id, `shop:economy:<uuid>` key,
 //! v2 ledger representation, menu purchase/refund flow, and the inventory/storage
-//! transaction authority owned by Solaris.
+//! transaction authority owned by Krasnokamen.
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use solaris_plugin_sdk::commands::{InventoryMenuSlot, InventoryResourceDelta};
-use solaris_plugin_sdk::events::{
+use krasnokamen_plugin_sdk::commands::{InventoryMenuSlot, InventoryResourceDelta};
+use krasnokamen_plugin_sdk::events::{
     Event, InventoryClick, InventoryMenuClicked, InventoryStorageOutcome,
     InventoryStorageTransactionAnswered, PlayerZoneTransition, StorageGetAnswered,
 };
-use solaris_plugin_sdk::storage::{StorageCasMutation, StorageMutation};
-use solaris_plugin_sdk::{
+use krasnokamen_plugin_sdk::storage::{StorageCasMutation, StorageMutation};
+use krasnokamen_plugin_sdk::{
     close_inventory_menu, export_plugin, inventory_storage_transaction, message_session,
     open_inventory_menu, storage_get, types, Command, Config, EventContext, Failure, InitContext,
     Plugin, StartupContribution, StorageGetOutcome,
@@ -707,7 +707,7 @@ impl Plugin for BasicEconomy {
         self.sequence = 0;
         self.rejected_batches.clear();
         Ok(vec![Command::UpsertZone(
-            solaris_plugin_sdk::commands::UpsertZone {
+            krasnokamen_plugin_sdk::commands::UpsertZone {
                 zone: zone.id,
                 dimension: zone.dimension,
                 minimum: zone.minimum,

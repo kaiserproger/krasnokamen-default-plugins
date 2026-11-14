@@ -1,4 +1,4 @@
-//! Graves for the Solaris standard pack.
+//! Graves for the Krasnokamen standard pack.
 //!
 //! The server's own death path does the custody: when a deployment declares the
 //! `death_graves` capability, one death's drops move into a barrel at the death
@@ -14,8 +14,8 @@
 
 use std::collections::BTreeMap;
 
-use solaris_plugin_sdk::events::{Event, ZoneCommandOutcome};
-use solaris_plugin_sdk::{
+use krasnokamen_plugin_sdk::events::{Event, ZoneCommandOutcome};
+use krasnokamen_plugin_sdk::{
     commands, export_plugin, message_player, schedule_timer, storage_cas, storage_get, types,
     Command, Config, EventContext, Failure, InitContext, Plugin, StorageCasOutcome,
     StorageGetOutcome,
@@ -217,7 +217,7 @@ impl Plugin for Graves {
     fn configure(
         &mut self,
         config: &Config,
-    ) -> Result<Option<solaris_plugin_sdk::StartupContribution>, Failure> {
+    ) -> Result<Option<krasnokamen_plugin_sdk::StartupContribution>, Failure> {
         Settings::parse(config)?;
         Ok(None)
     }
@@ -283,7 +283,7 @@ impl Graves {
     fn grave_created(
         &mut self,
         context: &EventContext,
-        grave: &solaris_plugin_sdk::PlayerGraveCreated,
+        grave: &krasnokamen_plugin_sdk::PlayerGraveCreated,
     ) -> Vec<Command> {
         let settings = self.settings();
         let zone = zone_id(&grave.dimension, grave.at.x, grave.at.y, grave.at.z);

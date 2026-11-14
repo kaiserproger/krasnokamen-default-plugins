@@ -14,7 +14,7 @@
 //! `petrified_oak`, `smooth_stone`) excluded. The script was not committed;
 //! the hand-authored table is the source of truth and the unit test below pins
 //! the rule budget.
-use solaris_plugin_sdk::{export_plugin, lifecycle, Config, Failure, Plugin, StartupContribution};
+use krasnokamen_plugin_sdk::{export_plugin, lifecycle, Config, Failure, Plugin, StartupContribution};
 
 /// Shaped crafting recipe: iron ingot over stick, yielding `chisel:chisel`.
 ///

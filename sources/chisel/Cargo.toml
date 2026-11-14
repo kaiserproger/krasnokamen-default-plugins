@@ -10,5 +10,5 @@ crate-type = ["cdylib"]
 name = "chisel_plugin"
 
 [dependencies]
-solaris-plugin-sdk = { path = "../../../solaris/sdk/rust/solaris-plugin-sdk" }
+krasnokamen-plugin-sdk = { path = "../../../solaris/sdk/rust/krasnokamen-plugin-sdk" }
 wit-bindgen = "0.62"

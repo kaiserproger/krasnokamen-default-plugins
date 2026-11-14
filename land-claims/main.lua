@@ -1,6 +1,6 @@
 --!strict
 
-local config: any = solaris.config()
+local config: any = krasnokamen.config()
 local storage_key = "claims:v1"
 local claims: any = {}
 local storage_version: any = nil
@@ -49,7 +49,7 @@ local function zone_id(claim: any): string
 end
 
 local function register_claim(claim: any)
-    solaris.upsert_protected_zone(
+    krasnokamen.upsert_protected_zone(
         zone_id(claim),
         config.dimension,
         claim.owner,
@@ -116,7 +116,7 @@ end
 
 local function save_claims(player_id, next_claims, action, claim)
     if pending_save ~= nil then
-        solaris.send_message(player_id, "Another claim update is still committing.")
+        krasnokamen.send_message(player_id, "Another claim update is still committing.")
         return
     end
     local request_id = next_request("save")
@@ -130,13 +130,13 @@ local function save_claims(player_id, next_claims, action, claim)
         stage = "save",
     }
     last_batch = { kind = "save", request_id = request_id }
-    solaris.storage_cas(request_id, storage_key, storage_version, encode_claims(next_claims))
+    krasnokamen.storage_cas(request_id, storage_key, storage_version, encode_claims(next_claims))
 end
 
 function on_server_started(_event)
     local request_id = next_request("load")
     last_batch = { kind = "load", request_id = request_id }
-    solaris.storage_get(request_id, storage_key)
+    krasnokamen.storage_get(request_id, storage_key)
 end
 
 function on_player_command(event)
@@ -145,7 +145,7 @@ function on_player_command(event)
         return
     end
     if not loaded then
-        solaris.send_message(event.player_id, "Claims are still loading.")
+        krasnokamen.send_message(event.player_id, "Claims are still loading.")
         return
     end
     local action = string.match(event.arguments, "^%s*(%S*)%s*$") or ""
@@ -156,23 +156,23 @@ function on_player_command(event)
     local current = claims[key]
     if action == "" or action == "status" then
         if current == nil then
-            solaris.send_message(event.player_id, "This chunk is unclaimed.")
+            krasnokamen.send_message(event.player_id, "This chunk is unclaimed.")
         elseif current.owner == owner then
-            solaris.send_message(event.player_id, "You own this chunk claim.")
+            krasnokamen.send_message(event.player_id, "You own this chunk claim.")
         else
-            solaris.send_message(event.player_id, "This chunk is claimed by another player.")
+            krasnokamen.send_message(event.player_id, "This chunk is claimed by another player.")
         end
         return
     end
     if action == "create" then
         if current ~= nil then
-            solaris.send_message(event.player_id, "This chunk is already claimed.")
+            krasnokamen.send_message(event.player_id, "This chunk is already claimed.")
             return
         end
         local count = 0
         for _ in pairs(claims) do count = count + 1 end
         if count >= config.maximum_claims then
-            solaris.send_message(event.player_id, "The server claim limit is reached.")
+            krasnokamen.send_message(event.player_id, "The server claim limit is reached.")
             return
         end
         local next_claims = copy_claims(claims)
@@ -181,18 +181,18 @@ function on_player_command(event)
         save_claims(event.player_id, next_claims, "create", claim)
     elseif action == "remove" then
         if current == nil then
-            solaris.send_message(event.player_id, "This chunk is not claimed.")
+            krasnokamen.send_message(event.player_id, "This chunk is not claimed.")
             return
         end
         if current.owner ~= owner and not event.operator then
-            solaris.send_message(event.player_id, "Only the owner or an operator can remove this claim.")
+            krasnokamen.send_message(event.player_id, "Only the owner or an operator can remove this claim.")
             return
         end
         local next_claims = copy_claims(claims)
         next_claims[key] = nil
         save_claims(event.player_id, next_claims, "remove", current)
     else
-        solaris.send_message(event.player_id, "Usage: /claim [status|create|remove]")
+        krasnokamen.send_message(event.player_id, "Usage: /claim [status|create|remove]")
     end
 end
 
@@ -218,7 +218,7 @@ function on_plugin_storage_get_result(event)
         if decoded[key] == nil then
             remaining[zone_id(claim)] = true
             command_count = command_count + 1
-            solaris.remove_zone(zone_id(claim))
+            krasnokamen.remove_zone(zone_id(claim))
         end
     end
     claims = decoded
@@ -248,12 +248,12 @@ function on_plugin_storage_cas_result(event)
         pending_save = nil
         if event.failure ~= nil or not event.applied then
             loaded = false
-            solaris.send_message(pending.player_id, "Claim protection failed and storage needs an operator check.")
+            krasnokamen.send_message(pending.player_id, "Claim protection failed and storage needs an operator check.")
             return
         end
         claims = pending.previous_claims
         storage_version = event.version
-        solaris.send_message(pending.player_id, "Claim protection was unavailable; no claim change was kept.")
+        krasnokamen.send_message(pending.player_id, "Claim protection was unavailable; no claim change was kept.")
         return
     end
     if pending.stage ~= "save" then
@@ -261,10 +261,10 @@ function on_plugin_storage_cas_result(event)
     end
     if event.failure ~= nil or not event.applied then
         pending_save = nil
-        solaris.send_message(pending.player_id, "Claims changed concurrently; retry.")
+        krasnokamen.send_message(pending.player_id, "Claims changed concurrently; retry.")
         local request_id = next_request("reload")
         last_batch = { kind = "reload", request_id = request_id }
-        solaris.storage_get(request_id, storage_key)
+        krasnokamen.storage_get(request_id, storage_key)
         return
     end
     claims = pending.claims
@@ -274,7 +274,7 @@ function on_plugin_storage_cas_result(event)
     if pending.action == "create" then
         register_claim(pending.claim)
     else
-        solaris.remove_zone(zone_id(pending.claim))
+        krasnokamen.remove_zone(zone_id(pending.claim))
     end
 end
 
@@ -287,7 +287,7 @@ local function rollback_pending_change()
     pending.request_id = request_id
     pending.stage = "rollback"
     last_batch = { kind = "rollback", request_id = request_id }
-    solaris.storage_cas(
+    krasnokamen.storage_cas(
         request_id,
         storage_key,
         storage_version,
@@ -318,9 +318,9 @@ function on_zone_command_result(event)
     end
     pending_save = nil
     if pending.action == "create" then
-        solaris.send_message(pending.player_id, "Chunk claimed. Breaking and placing are now protected.")
+        krasnokamen.send_message(pending.player_id, "Chunk claimed. Breaking and placing are now protected.")
     else
-        solaris.send_message(pending.player_id, "Chunk claim removed.")
+        krasnokamen.send_message(pending.player_id, "Chunk claim removed.")
     end
 end
 

@@ -1,6 +1,6 @@
 # Graves
 
-Death graves for Solaris. When a player dies with `keepInventory` off, the
+Death graves for Krasnokamen. When a player dies with `keepInventory` off, the
 server's own death path takes the drops into a barrel at the death spot in the
 same tick, and this package protects that barrel for its owner.
 
@@ -23,7 +23,7 @@ declares it. Removing the package returns deaths to vanilla drops.
   nothing is free, the drops stay as ordinary items.
 - Stacks the 27 slots cannot hold are dropped beside the grave (`spilled`), so a
   full inventory never loses items.
-- Experience is retained by the player instead of being reset: Solaris spawns no
+- Experience is retained by the player instead of being reset: Krasnokamen spawns no
   death XP orbs, so "no loss" means the bar survives.
 - `keepInventory` wins: with the gamerule on, no grave is created at all.
 

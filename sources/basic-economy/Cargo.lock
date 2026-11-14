@@ -12,7 +12,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 name = "basic-economy-plugin"
 version = "0.4.0"
 dependencies = [
- "solaris-plugin-sdk",
+ "krasnokamen-plugin-sdk",
  "toml",
  "wit-bindgen",
 ]
@@ -190,7 +190,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solaris-plugin-sdk"
+name = "krasnokamen-plugin-sdk"
 version = "0.8.0"
 dependencies = [
  "serde",

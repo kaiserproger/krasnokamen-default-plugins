@@ -1,4 +1,4 @@
-# Solaris Settlements — контент, производство и исторический ассортимент
+# Krasnokamen Settlements — контент, производство и исторический ассортимент
 
 Статус: **draft · требования к будущему контенту**, 2026-09-15.
 Владелец правил: [SPECIFICATION.md](SPECIFICATION.md). Техническая поставка: [IMPLEMENTATION_SPEC.md](IMPLEMENTATION_SPEC.md).
@@ -420,14 +420,14 @@ Coverage зависит от ориентации и реальной площа
 
 ### 16.1 Конкретный пример игрового заказа
 
-`solaris-settlements:halberd_field`:
+`krasnokamen-settlements:halberd_field`:
 
 - station: smithy с `forge + anvil + haft_bench`;
 - знания: AR5, локально подтверждённая древковая специальность;
-- вход: 2 `minecraft:iron_ingot`, 1 `solaris-settlements:steel_blank`, 2 `minecraft:oak_planks`, 1 `solaris-settlements:leather_strap`;
+- вход: 2 `minecraft:iron_ingot`, 1 `krasnokamen-settlements:steel_blank`, 2 `minecraft:oak_planks`, 1 `krasnokamen-settlements:leather_strap`;
 - инструмент: hammer profile с оставшейся прочностью, не потребляется целиком;
 - труд: 240 work units, два этапа — головка и сборка;
-- выход: 1 `solaris-settlements:halberd_field` с quality/durability/provenance;
+- выход: 1 `krasnokamen-settlements:halberd_field` с quality/durability/provenance;
 - отмена после первой стадии: сохранить выпущенную головку, вернуть только неиспользованные древко/ремень; нельзя вернуть железо плюс оставить головку;
 - repair: предписанный металлический расход/труд и/или новое древко по повреждению;
 - salvage: строго меньше учтённого металла конструкции, без возврата труда/целых расходников.
@@ -523,7 +523,7 @@ EquipmentDefinition
 
 **Acceptance CP-068: BLOCKED-ON-OWNER-DECISION** — явное itembalance admission каждого proposal value/revision ещё отсутствует; [вопросы с точными рекомендованными значениями §18.2](OWNER_DECISIONS.md#1-ruleset-r2--рекомендовать-точные-существующие-proposal-values). Это NOT admitted defaults. Отдельный generic blocker — genuine SDK catalog identity/hash query; таблица/owner approval не заменяют query или runtime traces.
 
-Все ID ниже имеют namespace `solaris-settlements`, carrier `minecraft:paper`, canonical `item_model` в точности равен полному ID; max stack = 1. Carrier не задаёт damage, reach, темп, броню или тип выстрела. Общий stamina capacity = 100, recovery = 0.5 за simulation tick; смена слота/предмета, reconnect и unload не отменяют уже начатую фазу/recovery. Фазы и скорость измеряются в simulation ticks, расстояния — в блоках, damage — в HP до защиты.
+Все ID ниже имеют namespace `krasnokamen-settlements`, carrier `minecraft:paper`, canonical `item_model` в точности равен полному ID; max stack = 1. Carrier не задаёт damage, reach, темп, броню или тип выстрела. Общий stamina capacity = 100, recovery = 0.5 за simulation tick; смена слота/предмета, reconnect и unload не отменяют уже начатую фазу/recovery. Фазы и скорость измеряются в simulation ticks, расстояния — в блоках, damage — в HP до защиты.
 
 | Definition | Форма / применение | HP / вид | Min–reach | Windup / active / recovery | Stamina | Max durability / wear |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -550,7 +550,7 @@ EquipmentDefinition
 
 **Acceptance CP-059: BLOCKED-ON-OWNER-DECISION** — количества/station/ticks/wear rev 1 и отдельные mounted feed/healing/stamina/collider/seat/charge/brace значения требуют явного owner admission; [decision sheet](OWNER_DECISIONS.md#2-ruleset-cp059-supply-rev-1--отдельные-вопросы-supply). Рекомендации не admitted defaults. Native horse admission/equipment/carry/rider binding/mounted control остаются отдельным generic API blocker; supply gate не означает mounted acceptance.
 
-| Recipe (`solaris-settlements:`) | Настоящие входы | Настоящий выход | Station | Simulation ticks | Tool wear |
+| Recipe (`krasnokamen-settlements:`) | Настоящие входы | Настоящий выход | Station | Simulation ticks | Tool wear |
 | --- | --- | --- | --- | --- | --- |
 | `saddle` | 3 `minecraft:leather` + 1 `minecraft:iron_ingot` | 1 `minecraft:saddle` | `minecraft:crafting_table` | 240 | нет |
 | `hay_block` | 9 `minecraft:wheat` | 1 `minecraft:hay_block` | `minecraft:crafting_table` | 80 | нет |

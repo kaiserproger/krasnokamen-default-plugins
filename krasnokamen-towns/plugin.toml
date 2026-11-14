@@ -1,0 +1,8 @@
+id = "krasnokamen-towns"
+name = "Krasnokamen Towns"
+version = "0.1.0"
+api = "0.8.0"
+entry = "plugin.wasm"
+events = ["server.started"]
+capabilities = ["storage", "zones", "player_queries"]
+player_commands = ["town"]
