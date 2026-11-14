@@ -1,6 +1,7 @@
 # Chisel
 
-Optional datapack-style addon for ordinary Loader clients. Right-click a
+Optional datapack-style addon installed as a server package; its custom item
+model and texture additionally need a consenting Loader client. Right-click a
 block that has stair/slab variants while holding the chisel:
 
 - TOP face -> top slab (one matching slab granted, dropped if the inventory
@@ -14,13 +15,29 @@ durability 250, 1 wear per use), crafted from an iron ingot over a stick
 (shaped, vertical). Covers every vanilla full block with both `_slab` and
 `_stairs` variants (58 families, 232 native block-tool rules).
 
-This is a `server_and_client` package: it ships a Loader bundle (item
-definition, model and texture), so players need a Krasnokamen client (native
-krasnokamen-client, or the Fabric/NeoForge/Forge Loader). A vanilla client is
-refused during Configuration by the platform's Loader-required rule; there is
-no optional-bundle negotiation yet, so no vanilla fallback exists. Install the
-`chisel` package alongside the other packages in `[plugins].directory` — it is
-opt-in and not part of the five-package standard pack.
+This is a `server_and_client` package whose Loader bundle (item definition,
+model and texture) is optional: `chisel/plugin.toml` declares
+`required = false`. In a deployment whose bundles are all optional, core
+Configuration sends a `krasnokamen:loader/probe` payload before known-pack
+negotiation. A client that answers `krasnokamen:loader/hello` negotiates the
+manifest for the platforms the bundle declares (`fabric`, `neoforge`, `forge`,
+`native`), consents to `register_items` and `load_assets`, and receives the
+item definition, model and texture.
+
+A client that does not answer — vanilla, or a Loader build older than the
+probe — completes Configuration without any Loader content and is not refused.
+Core then omits non-`minecraft:` `item_model` components from the stacks it
+sends that client, so `chisel:chisel` shows as its `minecraft:stick` carrier
+with its `Chisel` name instead of the vanilla missing-model cube. The
+block-tool rules match the authoritative stack, which keeps the model, so that
+client gets the same conversions. One required bundle anywhere in the
+deployment restores the refusal: every client negotiates and a client without
+the Loader is disconnected during Configuration naming the Loader requirement
+(core `docs/plugins/CONTRACT.md`).
+
+Install the `chisel` package alongside the other packages in
+`[plugins].directory` — it is opt-in and not part of the five-package standard
+pack.
 
 Build the component with
 `tools/build_standard_pack.py --core-root ../solaris --package chisel`;
