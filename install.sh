@@ -61,6 +61,8 @@ for package in "${packages[@]}"; do
   printf 'Installed %s into %s\n' "$package" "$destination/$package"
 done
 
-printf '\nSet [plugins].directory to %s and include these ids in plugins.expected:\n' "$destination"
-printf '  %s\n' "${packages[@]}"
-printf '%s\n' 'Keep any other deployed ids in that list. Run krasnokamen --check --config server.toml before starting.'
+printf '\nSet [plugins].directory to "%s" in server.toml.\n' "$destination"
+printf '%s\n' \
+  'Start with: krasnokamen --config server.toml' \
+  'Startup validates the deployment before listening; there is no --check mode.' \
+  'Join with a player client and run /money to check the standard pack.'

@@ -131,24 +131,27 @@ running the installer. To update, back up the deployed package and its data,
 review configuration/API changes, and deliberately replace the package while
 the server is stopped; this command is installation, not an updater.
 
-Set `[plugins].directory` to the destination. Production deployments should
-set `plugins.strict = true` and list every deployed plugin id under
-`plugins.expected`. For the full standard pack:
+Set `[plugins].directory` to the destination:
 
 ```toml
 [plugins]
 directory = "/path/to/server/plugins"
-strict = true
-expected = [
-  "krasnokamen-permissions", "krasnokamen-essentials", "krasnokamen-economy",
-  "krasnokamen-towns", "krasnokamen-audit",
-]
 ```
 
-Then run `krasnokamen --check --config server.toml` before starting the server.
-Package API/configuration validation belongs to the server, not the copy
-script. The core binary loads deployed directories only; it never compiles
+Start with `krasnokamen --config server.toml`. Startup validates the complete
+deployment before listening; there is no `--check` mode. The retired `strict`
+and `expected` settings are not required or supported. Invalid packages,
+duplicate command roots and incompatible components refuse startup instead of
+being skipped. The core loads deployed directories only; it never compiles
 these sources in. Manual copying remains valid on other platforms.
+
+Join with a compatible player client and run `/money` to check the standard
+pack: it should report your balance. Plugin commands need a player session;
+typing them in the server console does not test the plugin. For an optional
+auth package, register or log in first. Use the package's README for other
+command names. See the core's
+[plugin operations](https://github.com/kaiserproger/krasnokamen/blob/main/docs/plugins/OPERATIONS.md)
+for failure diagnostics.
 
 ## Computer monitor
 
@@ -210,9 +213,8 @@ by the installer. For an isolated immutable deployment, use
 `--output-dir /path/to/new-candidate` instead of `--write`; the package is then
 under that candidate's `plugins/computer/`.
 
-Stop the server before installation, keep all other deployed ids in
-`plugins.expected`, and add `"computer"`. Default builder/installer selections
-are unchanged; this package must be selected explicitly.
+Stop the server before installation and select `computer` explicitly.
+Default builder/installer selections are unchanged.
 Adding the custom item/carrier changes the persisted plugin startup identity.
 An existing world with a different identity is refused, not automatically
 migrated; installing this optional package does not rewrite saved worlds.
@@ -236,8 +238,8 @@ carriers; this package reserves only gray glazed terracotta.
   installation targets.
 - Server-only unless the manifest says otherwise; commands work with a vanilla
   client.
-- Manifest capabilities/events must cover everything `plugin.wasm` uses; strict
-  mode rejects malformed packages and stray files.
+- Manifest capabilities/events must cover everything `plugin.wasm` uses;
+  startup rejects malformed packages and stray files.
 - `config.toml` (where present) is validated at load; see each package README
   and `docs/PLUGINS.md` in the core repo for the full contract.
 
