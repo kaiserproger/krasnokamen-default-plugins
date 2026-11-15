@@ -175,15 +175,14 @@ monitor id has no alias.
 | Java with Fabric Loader | Targeted by the optional block/item/asset bundle |
 | Java with NeoForge Loader | Targeted by the same optional bundle |
 | Java with Forge Loader | Targeted by the same optional bundle |
-| Native `krasnokamen-client` | Joins without the bundle (its Loader rejects block content/indexes) and sees the carrier block |
+| Native `krasnokamen-client` | Targeted by the same optional bundle; supports schema-2 blocks, items and assets with the gray glazed terracotta carrier |
 | Vanilla Java without Krasnokamen Loader | Joins without the bundle and sees the carrier `minecraft:gray_glazed_terracotta` block and item |
 
 The real component and archive have passed simultaneous monitor/Ruby/Sapphire
 grant, placement, rendering, break and custom-item pickup cycles on all three
 Java adapters. The matching core ADR 0018 records the exact 2026-11-01 live
 receipts. These content gates do not prove terminal, capture or screen-relay UI.
-The edge relay admits Fabric/native sessions, not NeoForge/Forge; native's relay
-implementation does not overcome its block archive refusal. The bundle is
+The edge relay admits Fabric/native sessions, not NeoForge/Forge. The bundle is
 optional (`required = false`): a client without a compatible Loader is not
 refused and sees the carrier states (core `docs/plugins/CONTRACT.md`).
 
