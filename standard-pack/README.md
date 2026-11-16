@@ -13,9 +13,10 @@ All five are independent API 0.9 component packages and **server-only**. Command
 Install explicitly with `bash install.sh --directory /path/to/server/plugins`
 from the repository root; see the [deployment guide](../README.md#deployment-workflow).
 The installer selects these five packages by default and refuses existing
-package paths. Set the same `[plugins].directory`, enable `plugins.strict`,
-list every deployed id under `plugins.expected`, and run `krasnokamen --check`.
-There is no server-side bundled-selection list.
+package paths. Set the same `[plugins].directory` in the server configuration
+and start the server: startup validates the packages before listening. There
+is no `--check` mode, and the retired `plugins.strict` and `plugins.expected`
+settings are not supported. There is no server-side bundled-selection list.
 
 For source verification, run
 `python3 tools/build_standard_pack.py --core-root /path/to/krasnokamen --check`
