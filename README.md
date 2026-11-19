@@ -52,10 +52,28 @@ Optional components:
   computer/screen feature. Build explicitly with `--package computer`; it is
   not part of the default pack. See [Computer monitor](#computer-monitor).
 
-Legacy source/reference examples (not deployable components):
+Removed by the D66 duplicate-plugin audit (2026-11-19; evidence in
+`receipts/PluginDupAudit/AUDIT.md` of the owner host):
 
-- `land-claims`, `online-roster`, `geological-mines`;
-  `currency-catalog` is a fixture. `install.sh` does not deploy these.
+- `land-claims` — **duplicate of `krasnokamen-towns` (non-loading legacy)**: API
+  0.6.0 Lua example, refused by the component host (no `plugin.wasm`, no Lua
+  runtime). The standard pack provides the same claim + protected-zone
+  behaviour; the core only enforces zones a plugin registers, so nothing was
+  lost.
+- `online-roster`, `geological-mines` — non-loading v1 packages deleted as
+  retired API surface, **not** core duplicates. Their features are unported:
+  `/who` opened a player roster menu labelled `username | dimension` (native
+  `/list` prints names only), and `geological-mines` selected the
+  `realistic_deposits` ore profile and answered `/geology`. The selector still
+  exists as a `[worldgen] ore_profile` declaration any API 0.9 package may
+  make, but no shipped package declares it now.
+
+`git show 38a9c30:<package>` recovers any of them.
+
+The core repository keeps a minimal synthetic 0.6.0 manifest at
+`tools/fixtures/legacy-api-0.6/` (`../solaris`) for its
+`plugins.plugin_startup_fail_closed` matrix scenario. It is not a package, and
+nothing here deploys or builds it.
 
 ## Repository layout
 
